@@ -25,8 +25,10 @@ export default class extends Component {
               <form>
                   <label>
                    Select an Animal: 
-                   <select>
-                     
+                   <select onChange={this.handleChange}>
+                       {this.props.animals && this.props.animals.map(animal => {
+                            return <option key={animal}>{animal}</option>;
+                       })}
                     </select>
                   </label>
                  <input type="submit" value="View" />

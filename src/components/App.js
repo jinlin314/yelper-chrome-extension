@@ -7,23 +7,17 @@ export default class extends Component {
 
     constructor() {
         super();
-        this.state = {
-            mammal: 'Tiger',
-            bird : 'Eagle',
-            fish : 'Seahorse'
-        };
+        this.state = store.getState();
     }
 
     componentDidMount() {
-
         store.subscribe(() => {
             this.setState(store.getState());
         });
-
     }
 
-
     render() {
+
         const mammals = ['Tiger', 'Panda', 'Pig'];
         const birds = ['Eagle', 'Flamingo', 'Penguin'];
         const fish = [ 'Seahorse', 'Octopus', 'Stingray'];
@@ -34,15 +28,15 @@ export default class extends Component {
                 <div className="clearfix">
                     <div className="block">
                         <h2>Mammals</h2>
-                        <Exhibit />
+                        <Exhibit animal={this.state.mammal} animals={mammals} setAnimal={setMammal} />
                     </div>
                     <div className="block">
                         <h2>Birds</h2>
-                        <Exhibit />
+                        <Exhibit animal={this.state.bird} animals={birds} setAnimal={setBird} />
                     </div>
                     <div className="block">
                         <h2>Fish</h2>
-                        <Exhibit />
+                        <Exhibit animal={this.state.fish} animals={fish} setAnimal={setFish} />
                     </div>
                 </div>
             </div>
