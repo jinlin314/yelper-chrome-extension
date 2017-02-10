@@ -1,7 +1,5 @@
 const initialState = {
-    firstColor: [0, 0, 0],
-    secondColor: [0, 0, 0],
-    thirdColor: [0, 0, 0]
+    firstAnimal : "Tiger"
 };
 
 export default (state = initialState, action) => {
@@ -10,22 +8,13 @@ export default (state = initialState, action) => {
 
     switch (action.type) {
 
-        case 'SET_FIRST_COLOR':
-            newState.firstColor = action.color;
+        case 'SET_FIRST_ANIMAL':
+            newState.firstAnimal = action.animal;
             break;
 
-        case 'SET_SECOND_COLOR':
-            newState.secondColor = action.color;
-            break;
 
-        case 'SET_THIRD_COLOR':
-            newState.thirdColor = action.color;
-            break;
-
-        case 'SET_ALL_COLORS':
-            newState.firstColor = action.colors[0];
-            newState.secondColor = action.colors[1];
-            newState.thirdColor = action.colors[2];
+        case 'SET_ALL_ANIMALS':
+            newState.firstColor = action.animals[0];
             break;
 
         default:

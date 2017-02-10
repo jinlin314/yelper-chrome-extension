@@ -10,8 +10,7 @@ export default class extends Component {
         this.state = {
             firstAnimal: 'Tiger'
         };
-        //this.saveExhibit = this.saveExhibit.bind(this);
-        //this.setFirstAnimal = this.setFirstAnimal.bind(this);
+        this.setFirstAnimal = this.setFirstAnimal.bind(this);
     }
 
     componentDidMount() {
@@ -20,14 +19,14 @@ export default class extends Component {
             this.setState(store.getState());
         });
 
-        if (location.search !== '') {
-            const animals = location.search
-                .split('?')[1]
-                .split('&')
-                .map(s => s.split('=')[1])
-                .map(s => s.split(',').map(c => +c));
-            store.dispatch(setAnimals(animals));
-        }
+        // if (location.search !== '') {
+        //     const animals = location.search
+        //         .split('?')[1]
+        //         .split('&')
+        //         .map(s => s.split('=')[1])
+        //         .map(s => s.split(',').map(c => +c));
+        //     store.dispatch(setAnimals(animals));
+        // }
 
     }
 

@@ -22,7 +22,6 @@ export default class extends Component {
     }
 
     render() {
-        const setA = this.setAnimal;
         return (
             <form onSubmit={this.tryAnimal}>
                 <label>
@@ -34,7 +33,6 @@ export default class extends Component {
                 </label>
                 <input type="submit" value="Submit" />
               </form>
-
         );
     }
 
