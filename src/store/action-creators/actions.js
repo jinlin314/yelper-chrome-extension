@@ -1,22 +1,6 @@
-export const setMammal = animal => {
-    return {
-        type: 'SET_MAMMAL',
-        animal
-    };
-};
+export const setMammal;
 
-export const setBird = animal => {
-    return {
-        type: 'SET_BIRD',
-        animal
-    };
-};
+export const setBird;
 
-export const setFish = animal => {
-    return {
-        type: 'SET_FISH',
-        animal
-    };
-};
-
+export const setFish;
 

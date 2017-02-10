@@ -4,7 +4,5 @@ import Cage from './Cage';
 
 export default ({ setAnimal, animal, animals}) => (
     <div className="exhibit">
-        <AnimalSelect animals={animals} submitAnimal={setAnimal} animal={animal}/>
-        <Cage animal={animal}/>
     </div>
 );

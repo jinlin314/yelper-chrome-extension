@@ -22,15 +22,11 @@ export default class extends Component {
   
       render() {
           return (
-              <form onSubmit={this.viewAnimal}>
+              <form onSubmit={}>
                   <label>
                    Select an Animal: 
-                   <select value={this.state.selectedAnimal} onChange={this.handleChange}>
-                     {
-                         this.props.animals.map((animal, idx)=> {
-                             return <option value={animal} key={idx}>{animal}</option>
-                         })
-                      }
+                   <select>
+                     
                     </select>
                   </label>
                  <input type="submit" value="View" />
