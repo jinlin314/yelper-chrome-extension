@@ -15,9 +15,8 @@ export default class extends Component {
         this.setState({selectedAnimal: event.target.value});
     }
 
-    viewAnimal(event) {
+    viewAnimal() {
         this.props.submitAnimal(this.state.selectedAnimal);
-        event.preventDefault();
     }
 
     render() {

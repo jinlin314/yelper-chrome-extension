@@ -12,6 +12,81 @@ import mainReducer from '../src/store/reducers/main';
 
 describe('React components', () => {
 
+    describe('Exhibit component', () => {
+
+        let exhibit, setAnimalSpy, animal, animals, onChangeSpy;
+        beforeEach('Create component and onChange spy', () => {
+            animals = ['Tiger', 'Pig']
+            animal = 'Tiger'
+            setAnimalSpy = () => {};
+            exhibit = shallow(<Exhibit setAnimal={setAnimalSpy} animal={animal} animals={animals} />);
+        });
+
+        it('uses <AnimalSelect /> and <Cage />', () => {
+            expect(exhibit.find(Cage).length).to.be.equal(1);
+            expect(exhibit.find(AnimalSelect).length).to.be.equal(1);
+        });
+
+        it('passes its own animal prop to <Cage />', () => {
+            const theCage = exhibit.find(Cage).nodes[0];
+            expect(theCage.props.animal).to.be.equal(animal);
+        });
+
+        it('passes its own setAnimal prop to <AnimalSelect /> as submitAnimal', () => {
+            const theSelect = exhibit.find(AnimalSelect).nodes[0];
+            expect(theSelect.props.submitAnimal).to.be.equal(setAnimalSpy);
+        });
+
+    });
+
+    describe('Cage component', () => {
+
+        let cage;
+        beforeEach('Create component', () => {
+             cage = shallow(<Cage animal={'Panda'} />);
+        });
+
+        it('should be a <div> with an expected background', () => {
+            expect(cage.is('div')).to.be.equal(true);
+            expect(cage.get(0).props.style.backgroundImage).to.be.equal('url(./src/img/Panda.gif');
+        });
+
+    }); 
+
+
+    describe('AnimalSelect component', () => {
+
+        let animalSelect, animals, singleAnimal, setAnimalSpy;
+        beforeEach('Create component', () => {
+            setAnimalSpy = spy();
+            animals = ['Octopus', 'Seahorse', 'Stingray'];
+            singleAnimal = 'Octopus';
+            animalSelect = shallow(<AnimalSelect submitAnimal={setAnimalSpy} animals={animals} animal={singleAnimal}/>);
+        });
+
+        it('should be a form', () => {
+            expect(animalSelect.is('form')).to.be.true;
+        });
+
+        it('has an initial local state of {selectedAnimal = ""}', () => {
+            expect(animalSelect.state()).to.be.deep.equal({
+                selectedAnimal: ''
+            });
+        });
+
+        it('invokes prop submitAnimal when button clicked', () => {
+
+            let viewAnimalForm = animalSelect.find('form');
+
+            animalSelect.setState({selectedAnimal : 'Octopus'});
+
+            viewAnimalForm.simulate('submit');
+
+            expect(setAnimalSpy.calledWith('Octopus')).to.be.true;
+
+        });
+
+    });   
 })
 
 describe('Action Creators', () => {
