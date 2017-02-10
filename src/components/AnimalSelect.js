@@ -7,31 +7,34 @@ export default class extends Component {
         this.state = {
             firstAnimal : 'Tiger'
         };
-        this.setAnimal = this.setAnimal.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.tryAnimal = this.tryAnimal.bind(this);
     }
 
-    setAnimal(animal) {
-        return (v) => {
-            this.setState({
-                [color]: v
-            });
-        };
+    handleChange(event) {
+        this.setState({firstAnimal: event.target.value});
     }
 
-    tryAnimal() {
-        this.props.submitAnimal([
-            this.state.firstAnimal
-        ]);
+    tryAnimal(event) {
+        alert('Your animal is: ' + this.state.firstAnimal);
+        this.props.submitAnimal(this.state.firstAnimal);
+        event.preventDefault();
     }
 
     render() {
         const setA = this.setAnimal;
         return (
-            <div className="slider-group">
-                
-                <button onClick={this.tryAnimal}>View Animal</button>
-            </div>
+            <form onSubmit={this.tryAnimal}>
+                <label>
+                  Select an Animal: 
+                  <select value={this.state.firstAnimal} onChange={this.handleChange}>
+                    <option value="Tiger">Tiger</option>
+                    <option value="Panda">Panda</option>
+                  </select>
+                </label>
+                <input type="submit" value="Submit" />
+              </form>
+
         );
     }
 
