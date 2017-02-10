@@ -21,8 +21,13 @@ h1, h2 {
   clear: both;
 }
 
+.block {
+  width: 30vw;
+  float: left;
+}
+
 .exhibit {
-  margin: 2em;
+  margin: 1.5vw;
 }
 
 .cage {
@@ -30,6 +35,8 @@ h1, h2 {
   padding: 0 10px;
   float: left;
   height: 225px;
+  background-repeat: no-repeat;
+  background-size: 225px;
 }
 
 #save-button {
