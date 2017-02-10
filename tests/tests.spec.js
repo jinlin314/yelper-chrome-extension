@@ -12,12 +12,12 @@ import mainReducer from '../src/store/reducers/main';
 
 describe('React components', () => {
 
-    describe('Exhibit component', () => {
+    describe('<Exhibit /> component', () => {
 
         let exhibit, setAnimalSpy, animal, animals, onChangeSpy;
         beforeEach('Create component and onChange spy', () => {
-            animals = ['Tiger', 'Pig']
-            animal = 'Tiger'
+            animals = ['Tiger', 'Pig'];
+            animal = 'Tiger';
             setAnimalSpy = () => {};
             exhibit = shallow(<Exhibit setAnimal={setAnimalSpy} animal={animal} animals={animals} />);
         });
@@ -39,7 +39,7 @@ describe('React components', () => {
 
     });
 
-    describe('Cage component', () => {
+    describe('<Cage /> component', () => {
 
         let cage;
         beforeEach('Create component', () => {
@@ -51,10 +51,10 @@ describe('React components', () => {
             expect(cage.get(0).props.style.backgroundImage).to.be.equal('url(./src/img/Panda.gif');
         });
 
-    }); 
+    });
 
 
-    describe('AnimalSelect component', () => {
+    describe('<AnimalSelect /> component', () => {
 
         let animalSelect, animals, singleAnimal, setAnimalSpy;
         beforeEach('Create component', () => {
@@ -86,10 +86,11 @@ describe('React components', () => {
 
         });
 
-    });   
-})
+    });
+});
 
 describe('Action Creators', () => {
+
 	  describe('setMammal', () => {
 
         xit('returns properly formatted action', () => {
@@ -134,11 +135,12 @@ describe('Action Creators', () => {
         });
 
     });
-})
+});
 
 
 describe('Reducer', () => {
-	let testStore;
+
+	  let testStore;
     beforeEach('Create testing store', () => {
         testStore = createStore(mainReducer);
     });
@@ -146,8 +148,8 @@ describe('Reducer', () => {
     xit('has expected initial state', () => {
         expect(testStore.getState()).to.be.deep.equal({
             mammal : "Tiger",
-		    bird : "Eagle",
-		    fish : "Seahorse"
+		        bird : "Eagle",
+		        fish : "Seahorse"
         });
     });
 
@@ -182,5 +184,5 @@ describe('Reducer', () => {
             expect(newState.fish).to.be.deep.equal("Stingray");
         });
 
-    })     
-})
+    })
+});
