@@ -1,6 +1,6 @@
-export const setMammal;
+export const setMammal = undefined;
 
-export const setBird;
+export const setBird = undefined;
 
-export const setFish;
+export const setFish = undefined;
 

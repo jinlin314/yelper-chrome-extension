@@ -22,17 +22,17 @@ describe('React components', () => {
             exhibit = shallow(<Exhibit setAnimal={setAnimalSpy} animal={animal} animals={animals} />);
         });
 
-        it('uses <AnimalSelect /> and <Cage />', () => {
+        xit('uses <AnimalSelect /> and <Cage />', () => {
             expect(exhibit.find(Cage).length).to.be.equal(1);
             expect(exhibit.find(AnimalSelect).length).to.be.equal(1);
         });
 
-        it('passes its own animal prop to <Cage />', () => {
+        xit('passes its own animal prop to <Cage />', () => {
             const theCage = exhibit.find(Cage).nodes[0];
             expect(theCage.props.animal).to.be.equal(animal);
         });
 
-        it('passes its own setAnimal prop to <AnimalSelect /> as submitAnimal', () => {
+        xit('passes its own setAnimal prop to <AnimalSelect /> as submitAnimal', () => {
             const theSelect = exhibit.find(AnimalSelect).nodes[0];
             expect(theSelect.props.submitAnimal).to.be.equal(setAnimalSpy);
         });
@@ -46,7 +46,7 @@ describe('React components', () => {
              cage = shallow(<Cage animal={'Panda'} />);
         });
 
-        it('should be a <div> with an expected background', () => {
+        xit('should be a <div> with an expected background', () => {
             expect(cage.is('div')).to.be.equal(true);
             expect(cage.get(0).props.style.backgroundImage).to.be.equal('url(./src/img/Panda.gif');
         });
@@ -64,17 +64,17 @@ describe('React components', () => {
             animalSelect = shallow(<AnimalSelect submitAnimal={setAnimalSpy} animals={animals} animal={singleAnimal}/>);
         });
 
-        it('should be a form', () => {
+        xit('should be a form', () => {
             expect(animalSelect.is('form')).to.be.true;
         });
 
-        it('has an initial local state of {selectedAnimal = ""}', () => {
+        xit('has an initial local state of {selectedAnimal = ""}', () => {
             expect(animalSelect.state()).to.be.deep.equal({
                 selectedAnimal: ''
             });
         });
 
-        it('invokes prop submitAnimal when button clicked', () => {
+        xit('invokes prop submitAnimal when button clicked', () => {
 
             let viewAnimalForm = animalSelect.find('form');
 
@@ -92,7 +92,7 @@ describe('React components', () => {
 describe('Action Creators', () => {
 	  describe('setMammal', () => {
 
-        it('returns properly formatted action', () => {
+        xit('returns properly formatted action', () => {
 
             const testMammal = "Tiger";
 
@@ -107,7 +107,7 @@ describe('Action Creators', () => {
 
     describe('setBird', () => {
 
-        it('returns properly formatted action', () => {
+        xit('returns properly formatted action', () => {
 
             const testBird = "Penguin";
 
@@ -122,7 +122,7 @@ describe('Action Creators', () => {
 
     describe('setFish', () => {
 
-        it('returns properly formatted action', () => {
+        xit('returns properly formatted action', () => {
 
             const testFish = 'Octopus';
 
@@ -143,7 +143,7 @@ describe('Reducer', () => {
         testStore = createStore(mainReducer);
     });
 
-    it('has expected initial state', () => {
+    xit('has expected initial state', () => {
         expect(testStore.getState()).to.be.deep.equal({
             mammal : "Tiger",
 		    bird : "Eagle",
@@ -153,7 +153,7 @@ describe('Reducer', () => {
 
     describe('SET_MAMMAL', () => {
 
-        it('sets mammal to animal in action creator', () => {
+        xit('sets mammal to animal in action creator', () => {
             testStore.dispatch({ type: 'SET_MAMMAL', animal: "Pig" });
             const newState = testStore.getState();
             expect(newState.mammal).to.be.deep.equal("Pig");
@@ -166,7 +166,7 @@ describe('Reducer', () => {
 
     describe('SET_BIRD', () => {
 
-        it('sets bird to animal in action creator', () => {
+        xit('sets bird to animal in action creator', () => {
             testStore.dispatch({ type: 'SET_BIRD', animal: "Penguin" });
             const newState = testStore.getState();
             expect(newState.bird).to.be.deep.equal("Penguin");
@@ -176,7 +176,7 @@ describe('Reducer', () => {
 
     describe('SET_FISH', () => {
 
-        it('sets fish to animal in action creator', () => {
+        xit('sets fish to animal in action creator', () => {
             testStore.dispatch({ type: 'SET_FISH', animal: "Stingray" });
             const newState = testStore.getState();
             expect(newState.fish).to.be.deep.equal("Stingray");

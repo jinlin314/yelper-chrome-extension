@@ -22,7 +22,7 @@ export default class extends Component {
   
       render() {
           return (
-              <form onSubmit={}>
+              <form>
                   <label>
                    Select an Animal: 
                    <select>
