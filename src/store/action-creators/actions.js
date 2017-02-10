@@ -1,6 +1,6 @@
-export const setFirst = animal => {
+export const setMammal = animal => {
     return {
-        type: 'SET_FIRST_ANIMAL',
+        type: 'SET_MAMMAL',
         animal
     };
 };

@@ -8,14 +8,10 @@ export default (state = initialState, action) => {
 
     switch (action.type) {
 
-        case 'SET_FIRST_ANIMAL':
-            newState.firstAnimal = action.animal;
+        case 'SET_MAMMAL':
+            newState.mammal = action.animal;
             break;
 
-
-        case 'SET_ALL_ANIMALS':
-            newState.firstColor = action.animals[0];
-            break;
 
         default:
             return state;

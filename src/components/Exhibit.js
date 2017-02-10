@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import AnimalSelect from './AnimalSelect';
 import Cage from './Cage';
 
-export default ({setAnimal, animal}) => (
+export default ({ setAnimal, animal, animals}) => (
     <div className="exhibit">
-        <AnimalSelect submitAnimal={setAnimal}/>
+        <AnimalSelect animals={animals} submitAnimal={setAnimal} animal={animal}/>
         <Cage animal={animal}/>
     </div>
 );

@@ -5,34 +5,37 @@ export default class extends Component {
     constructor() {
         super();
         this.state = {
-            firstAnimal : 'Tiger'
+            selectedAnimal : 'Tiger'
         };
         this.handleChange = this.handleChange.bind(this);
-        this.tryAnimal = this.tryAnimal.bind(this);
+        this.viewAnimal = this.viewAnimal.bind(this);
     }
 
     handleChange(event) {
-        this.setState({firstAnimal: event.target.value});
+        this.setState({selectedAnimal: event.target.value});
     }
 
-    tryAnimal(event) {
-        alert('Your animal is: ' + this.state.firstAnimal);
-        this.props.submitAnimal(this.state.firstAnimal);
+    viewAnimal(event) {
+        this.props.submitAnimal(this.state.selectedAnimal);
         event.preventDefault();
     }
 
     render() {
+        console.log('anial', this.state, this.props)
         return (
-            <form onSubmit={this.tryAnimal}>
+            <form onSubmit={this.viewAnimal}>
                 <label>
                   Select an Animal: 
-                  <select value={this.state.firstAnimal} onChange={this.handleChange}>
-                    <option value="Tiger">Tiger</option>
-                    <option value="Panda">Panda</option>
+                  <select value={this.state.selectedAnimal} onChange={this.handleChange}>
+                    {
+                        this.props.animals.map((animal, idx)=> {
+                            return <option value={animal} key={idx}>{animal}</option>
+                        })
+                    }
                   </select>
                 </label>
                 <input type="submit" value="Submit" />
-              </form>
+            </form>
         );
     }
 
