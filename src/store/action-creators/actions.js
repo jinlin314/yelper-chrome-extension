@@ -5,10 +5,18 @@ export const setMammal = animal => {
     };
 };
 
-
-export const setAnimals = animals => {
+export const setBird = animal => {
     return {
-        type: 'SET_ALL_ANIMALS',
-        animals
+        type: 'SET_BIRD',
+        animal
     };
 };
+
+export const setFish = animal => {
+    return {
+        type: 'SET_FISH',
+        animal
+    };
+};
+
+

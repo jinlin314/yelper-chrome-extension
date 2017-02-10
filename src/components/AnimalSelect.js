@@ -5,7 +5,7 @@ export default class extends Component {
     constructor() {
         super();
         this.state = {
-            selectedAnimal : 'Tiger'
+            selectedAnimal : ''
         };
         this.handleChange = this.handleChange.bind(this);
         this.viewAnimal = this.viewAnimal.bind(this);
@@ -21,7 +21,6 @@ export default class extends Component {
     }
 
     render() {
-        console.log('anial', this.state, this.props)
         return (
             <form onSubmit={this.viewAnimal}>
                 <label>
@@ -34,7 +33,7 @@ export default class extends Component {
                     }
                   </select>
                 </label>
-                <input type="submit" value="Submit" />
+                <input type="submit" value="View" />
             </form>
         );
     }

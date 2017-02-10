@@ -1,5 +1,7 @@
 const initialState = {
-    firstAnimal : "Tiger"
+    mammal : "Tiger",
+    bird : "Eagle",
+    fish : "Seahorse"
 };
 
 export default (state = initialState, action) => {
@@ -12,6 +14,13 @@ export default (state = initialState, action) => {
             newState.mammal = action.animal;
             break;
 
+        case 'SET_BIRD':
+            newState.bird = action.animal;
+            break;
+
+        case 'SET_FISH':
+            newState.fish = action.animal;
+            break;    
 
         default:
             return state;
