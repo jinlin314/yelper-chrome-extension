@@ -14,12 +14,16 @@ describe('React components', () => {
 
     describe('<Exhibit /> component', () => {
 
-        let exhibit, setAnimalSpy, animal, animals, onChangeSpy;
+        let exhibit, setAnimalSpy, selectedAnimal, animals, onChangeSpy;
         beforeEach('Create component and onChange spy', () => {
             animals = ['Tiger', 'Pig'];
-            animal = 'Tiger';
-            setAnimalSpy = () => {};
-            exhibit = shallow(<Exhibit setAnimal={setAnimalSpy} animal={animal} animals={animals} />);
+            selectedAnimal = 'Tiger';
+            setAnimalSpy = spy();
+            exhibit = shallow(<Exhibit setAnimal={setAnimalSpy} animals={animals} />);
+        });
+
+        xit('has an initial *local* state of {selectedAnimal = "Tiger"}', () => {
+            expect(animalSelect.state()).to.be.deep.equal({selectedAnimal});
         });
 
         xit('uses <AnimalSelect /> and <Cage />', () => {
@@ -29,7 +33,12 @@ describe('React components', () => {
 
         xit('passes its own animal prop to <Cage />', () => {
             const theCage = exhibit.find(Cage).nodes[0];
-            expect(theCage.props.animal).to.be.equal(animal);
+            expect(theCage.props.selectedAnimal).to.be.equal(selectedAnimal);
+        });
+
+        xit('passes its own animals prop to <AnimalSelect />', () => {
+            const theSelect = exhibit.find(AnimalSelect).nodes[0];
+            expect(theSelect.props.animals).to.be.deep.equal(animals);
         });
 
         xit('passes its own setAnimal prop to <AnimalSelect /> as submitAnimal', () => {
@@ -43,7 +52,7 @@ describe('React components', () => {
 
         let cage;
         beforeEach('Create component', () => {
-             cage = shallow(<Cage animal={'Panda'} />);
+            cage = shallow(<Cage animal={'Panda'} />);
         });
 
         xit('should be a <div> with an expected background', () => {
@@ -56,37 +65,44 @@ describe('React components', () => {
 
     describe('<AnimalSelect /> component', () => {
 
-        let animalSelect, animals, singleAnimal, setAnimalSpy;
+        let animalSelect, animals, selectedAnimal, setAnimalSpy;
         beforeEach('Create component', () => {
             setAnimalSpy = spy();
             animals = ['Octopus', 'Seahorse', 'Stingray'];
-            singleAnimal = 'Octopus';
-            animalSelect = shallow(<AnimalSelect submitAnimal={setAnimalSpy} animals={animals} animal={singleAnimal}/>);
+            selectedAnimal = 'Octopus';
+            animalSelect = shallow(<AnimalSelect submitAnimal={setAnimalSpy} animals={animals} animal={selectedAnimal}/>);
         });
 
         xit('should be a form', () => {
             expect(animalSelect.is('form')).to.be.true;
         });
 
-        xit('has an initial local state of {selectedAnimal = ""}', () => {
-            expect(animalSelect.state()).to.be.deep.equal({
-                selectedAnimal: ''
-            });
+        xit('form should have a select that lists all the animals as options', () => {
+            expect(animalSelect.find('select').length).to.be.equal(1);
+            // loops through each option in the select
+            // determines if the option's key is equivalent to the animal
+            animalSelect.find('option').forEach((animalOption, i) => {
+                expect(animalOption.key()).to.be.equal(animals[i])
+                expect(animalOption.text().trim()).to.be.equal(animals[i])
+            })
         });
 
-        xit('invokes prop submitAnimal when button clicked', () => {
+        xit('select should have an onChange event that submits the new animal', () => {
+            expect(animalSelect.getNode('select').props.onChange).to.be.function;
+            // choosing a random animal
+            let animal = animals[Math.floor(Math.random()+2)]
+            // simulating a 'change' event with an event described as the second argument given to `simulate`
+            animalSelect.find('select').simulate('change', {target: {value: animal}});
+            expect(setAnimalSpy.calledWith(animal)).to.be.true;
+        });
 
-            let viewAnimalForm = animalSelect.find('form');
-
-            animalSelect.setState({selectedAnimal : 'Octopus'});
-
-            viewAnimalForm.simulate('submit');
-
-            expect(setAnimalSpy.calledWith('Octopus')).to.be.true;
-
+        xit('should have a label to describe the select', () => {
+            expect(animalSelect.find('label').length).to.be.equal(1);
+            expect(animalSelect.text('label')).to.be.equal("Select an Animal: ");
         });
 
     });
+
 });
 
 describe('Action Creators', () => {
@@ -96,61 +112,53 @@ describe('Action Creators', () => {
         xit('returns properly formatted action', () => {
 
             const testMammal = "Tiger";
-
             expect(setMammal(testMammal)).to.be.deep.equal({
                 type: 'SET_MAMMAL',
                 animal : testMammal
             });
-
         });
-
     });
 
     describe('setBird', () => {
 
         xit('returns properly formatted action', () => {
-
             const testBird = "Penguin";
-
             expect(setBird(testBird)).to.be.deep.equal({
                 type: 'SET_BIRD',
                 animal: testBird
             });
-
         });
-
     });
 
     describe('setFish', () => {
 
         xit('returns properly formatted action', () => {
-
             const testFish = 'Octopus';
-
             expect(setFish(testFish)).to.be.deep.equal({
                 type: 'SET_FISH',
                 animal: testFish
             });
-
         });
 
     });
+
 });
 
 
 describe('Reducer', () => {
 
-	  let testStore;
+    const initialState = {
+        mammal : "Tiger",
+        bird : "Eagle",
+        fish : "Seahorse"
+        }
+    let testStore;
     beforeEach('Create testing store', () => {
         testStore = createStore(mainReducer);
     });
 
     xit('has expected initial state', () => {
-        expect(testStore.getState()).to.be.deep.equal({
-            mammal : "Tiger",
-		        bird : "Eagle",
-		        fish : "Seahorse"
-        });
+        expect(testStore.getState()).to.be.deep.equal(initialState);
     });
 
     describe('SET_MAMMAL', () => {
@@ -184,5 +192,16 @@ describe('Reducer', () => {
             expect(newState.fish).to.be.deep.equal("Stingray");
         });
 
-    })
+    });
+
+    describe('SET_REPTILE', () => {
+
+        xit('tries to use invalid action type', () => {
+            testStore.dispatch({ type: 'SET_REPTILE', animal: "Ball Python" });
+            const newState = testStore.getState();
+            expect(newState).to.be.deep.equal(initialState);
+        });
+
+    });
+
 });
