@@ -1,3 +1,7 @@
+/*
+This file is NOT necessary to edit for the test specs
+*/
+
 import React, {Component} from 'react';
 import  Exhibit from './Exhibit';
 // The below code will be useful if you want to use your redux store as the one source of state and truth

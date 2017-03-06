@@ -23,35 +23,35 @@ describe('React components', () => {
             exhibit = shallow(<Exhibit animals={animals} selectedAnimal={selectedAnimal}/>);
         });
 
-        it('has an initial *local* state with a selectedAnimal', () => {
+        xit('has an initial *local* state with a selectedAnimal', () => {
             expect(exhibit.state()).to.be.deep.equal({selectedAnimal});
         });
 
-        it('uses <AnimalSelect /> and <Cage />', () => {
+        xit('uses <AnimalSelect /> and <Cage />', () => {
             expect(exhibit.find(Cage).length).to.be.equal(1);
             expect(exhibit.find(AnimalSelect).length).to.be.equal(1);
         });
 
-        it('passes its own animal prop to <Cage />', () => {
+        xit('passes its own animal prop to <Cage />', () => {
             expect(exhibit.find(Cage).props().selectedAnimal).to.be.equal(selectedAnimal);
         });
 
-        it('passes its own animals prop to <AnimalSelect />', () => {
+        xit('passes its own animals prop to <AnimalSelect />', () => {
             expect(exhibit.find(AnimalSelect).props().animals).to.be.deep.equal(animals);
         });
 
-        it('has a setAnimal function that takes in an animal and sets the state', () => {
+        xit('has a setAnimal function that takes in an animal and sets the state', () => {
             let newAnimal = getRandomAnimal();
             expect(exhibit.instance().setAnimal).to.be.function;
             exhibit.instance().setAnimal(newAnimal);
             expect(exhibit.state()).to.be.deep.equal({selectedAnimal: newAnimal})
         });        
 
-        it('ensures setAnimal function is properly bound', () => {
+        xit('ensures setAnimal function is properly bound', () => {
             expect(exhibit.instance().setAnimal.hasOwnProperty('prototype')).to.be.false;
         });
 
-        it('passes its own setAnimal prop to <AnimalSelect /> as submitAnimal', () => {
+        xit('passes its own setAnimal prop to <AnimalSelect /> as submitAnimal', () => {
             expect(exhibit.find(AnimalSelect).props().submitAnimal).to.be.equal(exhibit.instance().setAnimal);
         });
 
@@ -65,13 +65,12 @@ describe('React components', () => {
             cage = shallow(<Cage selectedAnimal={animal} />);
         });
 
-        it('should be a <div> with an expected background', () => {
+        xit('should be a <div> with an expected background', () => {
             expect(cage.is('div')).to.be.equal(true);
             expect(cage.get(0).props.style.backgroundImage).to.be.equal(`url(./src/img/${animal}.gif`);
         });
 
     });
-
 
     describe('<AnimalSelect /> component', () => {
 
@@ -82,11 +81,11 @@ describe('React components', () => {
             animalSelect = shallow(<AnimalSelect submitAnimal={setAnimalSpy} animals={animals} />);
         });
 
-        it('should be a form', () => {
+        xit('should be a form', () => {
             expect(animalSelect.is('form')).to.be.true;
         });
 
-        it('form should have a select that lists all the animals as options', () => {
+        xit('form should have a select that lists all the animals as options', () => {
             expect(animalSelect.find('select').length).to.be.equal(1);
             // loops through each option in the select
             // determines if the option's key is equivalent to the animal
@@ -96,13 +95,13 @@ describe('React components', () => {
             })
         });
 
-        it('should have a label to describe the select', () => {
+        xit('should have a label to describe the select', () => {
             const selectLabel = animalSelect.find('label')
             expect(selectLabel.length).to.be.equal(1);
             expect(selectLabel.text()).to.be.equal("Select an Animal: ");
         });
 
-        it('select should have an onChange event that submits the new animal', () => {
+        xit('select should have an onChange event that submits the new animal', () => {
             expect(animalSelect.props('select').onChange).to.be.function;
             // choosing a random animal
             let animal = getRandomAnimal()

@@ -15,7 +15,7 @@ function getRandomAnimal (animals) {
 describe('Action Creators', () => {
 
 	  describe('setMammal', () => {
-        it('returns properly formatted action', () => {
+        xit('returns properly formatted action', () => {
             const testMammal = getRandomAnimal(mammals);
             expect(setMammal(testMammal)).to.be.deep.equal({
                 type: 'SET_MAMMAL',
@@ -25,7 +25,7 @@ describe('Action Creators', () => {
     });
 
     describe('setBird', () => {
-        it('returns properly formatted action', () => {
+        xit('returns properly formatted action', () => {
             const testBird = getRandomAnimal(birds);
             expect(setBird(testBird)).to.be.deep.equal({
                 type: 'SET_BIRD',
@@ -35,7 +35,7 @@ describe('Action Creators', () => {
     });
 
     describe('setFish', () => {
-        it('returns properly formatted action', () => {
+        xit('returns properly formatted action', () => {
             const testFish = getRandomAnimal(fish);
             expect(setFish(testFish)).to.be.deep.equal({
                 type: 'SET_FISH',
@@ -65,13 +65,13 @@ describe('Reducer', () => {
         Object.freeze(testStore.getState());
     });
 
-    it('has expected initial state', () => {
+    xit('has expected initial state', () => {
         expect(testStore.getState()).to.be.deep.equal(initialState);
     });
 
     describe('SET_MAMMAL', () => {
         const newMammal = getRandomAnimal(mammals);
-        it('sets mammal to animal in action creator (non-mutating)', () => {
+        xit('sets mammal to animal in action creator (non-mutating)', () => {
             testStore.dispatch({ type: 'SET_MAMMAL', animal: newMammal});
             const newState = testStore.getState();
             expect(newState.selectedMammal).to.be.deep.equal(newMammal);
@@ -82,7 +82,7 @@ describe('Reducer', () => {
 
     describe('SET_BIRD', () => {
         const newBird = getRandomAnimal(birds);
-        it('sets bird to animal in action creator (non-mutating)', () => {
+        xit('sets bird to animal in action creator (non-mutating)', () => {
             testStore.dispatch({ type: 'SET_BIRD', animal: newBird });
             const newState = testStore.getState();
             expect(newState.selectedBird).to.be.deep.equal(newBird);
@@ -93,7 +93,7 @@ describe('Reducer', () => {
 
     describe('SET_FISH', () => {
         const newFish = getRandomAnimal(fish);
-        it('sets fish to animal in action creator (non-mutating)', () => {
+        xit('sets fish to animal in action creator (non-mutating)', () => {
             testStore.dispatch({ type: 'SET_FISH', animal: newFish });
             const newState = testStore.getState();
             expect(newState.selectedFish).to.be.deep.equal(newFish);
@@ -103,7 +103,7 @@ describe('Reducer', () => {
     });
 
     describe('SET_REPTILE', () => {
-        it('tries to use invalid action type', () => {
+        xit('tries to use invalid action type', () => {
             testStore.dispatch({ type: 'SET_REPTILE', animal: "Ball Python" });
             const newState = testStore.getState();
             expect(newState).to.be.deep.equal(initialState);
