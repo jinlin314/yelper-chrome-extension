@@ -6,7 +6,7 @@ export default ({animals, submitAnimal}) => {
     <form>
       <label>Select an Animal: </label>
       <select onChange={(e)=> submitAnimal(e.target.value)}> 
-      {
+      { animals &&
         animals.map(animal => <option key={animal}>{animal}</option>) 
       }
       </select>

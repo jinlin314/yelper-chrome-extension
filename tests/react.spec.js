@@ -62,7 +62,7 @@ describe('React components', () => {
         let cage, animal;
         beforeEach('Create component', () => {
             animal = getRandomAnimal();
-            cage = shallow(<Cage animal={animal} />);
+            cage = shallow(<Cage selectedAnimal={animal} />);
         });
 
         it('should be a <div> with an expected background', () => {

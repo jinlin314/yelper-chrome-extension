@@ -18,13 +18,13 @@ export default class extends Component {
   }
 
   render () {
-  	const { selectedAnimal, animals } = this.props;
+  	const { animals } = this.props;
+  	const { selectedAnimal } = this.state;
   	return (
 	    <div className="exhibit">
 	    	<AnimalSelect animals={animals} submitAnimal={ this.setAnimal }/>
 	    	<Cage selectedAnimal={selectedAnimal}/>
 	    </div>
-  		
   		)
   }
 };
