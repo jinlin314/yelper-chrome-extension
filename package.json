@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack-dev-server",
-    "test": "mocha ./tests/tests.spec.js --watch --compilers js:babel-register"
+    "test": "mocha ./tests/*.spec.js --watch --compilers js:babel-register"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",

@@ -1,15 +1,6 @@
 const initialState = {};
 
+// make sure you understand the parameters here!
 export default (state = initialState, action) => {
-
-    const newState = Object.assign({}, state);
-
-    switch (action.type) {   
-
-        default:
-            return state;
-    }
-
-    return newState;
 
 };
