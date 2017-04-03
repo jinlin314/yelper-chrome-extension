@@ -8,11 +8,11 @@ import  Exhibit from './Exhibit';
 // import store from '../store';
 // import {setMammal, setBird, setFish} from '../store/action-creators/actions';
 
-export default class extends Component {
+export default class App extends Component {
 
     constructor() {
         super();
-        // The below code will be useful if you want to use your redux store as the one source of state and truth
+        // The below code will be useful if you want to use your redux store as the one source of truth
         // this.state = store.getState();
         this.state =  {
             selectedMammal : "Tiger",

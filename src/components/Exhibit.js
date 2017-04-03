@@ -3,7 +3,7 @@ import AnimalSelect from './AnimalSelect';
 import Cage from './Cage';
 
 
-export default class extends Component {
+export default class Exhibit extends Component {
 
   constructor() {
     super();
