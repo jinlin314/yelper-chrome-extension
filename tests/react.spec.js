@@ -20,6 +20,8 @@ describe('React components', () => {
         beforeEach('Create component and onChange spy', () => {
             selectedAnimal = getRandomAnimal();
             // this is the enzyme way of creating the tag and sending it props
+                // meaning shallow is like a parent rendering an Exhibit element and sending it animals and selectedAnimal
+                // exhibit is the returned value of `shallow()` which is a wrapper around our ReactElement (exhibit) 
             exhibit = shallow(<Exhibit animals={animals} selectedAnimal={selectedAnimal}/>);
         });
 
@@ -77,7 +79,6 @@ describe('React components', () => {
         let animalSelect, selectedAnimal, setAnimalSpy;
         beforeEach('Create component', () => {
             setAnimalSpy = spy();
-            selectedAnimal = getRandomAnimal();
             animalSelect = shallow(<AnimalSelect submitAnimal={setAnimalSpy} animals={animals} />);
         });
 
