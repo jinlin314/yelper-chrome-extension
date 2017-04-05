@@ -72,41 +72,56 @@ describe('Reducer', () => {
     describe('SET_MAMMAL', () => {
         const newMammal = getRandomAnimal(mammals);
         xit('sets mammal to animal in action creator (non-mutating)', () => {
-            testStore.dispatch({ type: 'SET_MAMMAL', animal: newMammal});
-            const newState = testStore.getState();
-            expect(newState.selectedMammal).to.be.deep.equal(newMammal);
-            expect(newState.selectedBird).to.be.deep.equal("Eagle");
-            expect(newState.selectedFish).to.be.deep.equal("Seahorse");
+            expect(
+                mainReducer(undefined, { type: 'SET_MAMMAL', animal: newMammal})
+            ).to.deep.equal({
+                selectedMammal: newMammal,
+                selectedBird: initialState.selectedBird,
+                selectedFish: initialState.selectedFish,
+                mammals,
+                birds,
+                fish
+            });
         });
     });
 
     describe('SET_BIRD', () => {
         const newBird = getRandomAnimal(birds);
         xit('sets bird to animal in action creator (non-mutating)', () => {
-            testStore.dispatch({ type: 'SET_BIRD', animal: newBird });
-            const newState = testStore.getState();
-            expect(newState.selectedBird).to.be.deep.equal(newBird);
-            expect(newState.selectedMammal).to.be.deep.equal("Tiger");
-            expect(newState.selectedFish).to.be.deep.equal("Seahorse");
+            expect(
+                mainReducer(undefined, { type: 'SET_BIRD', animal: newBird })
+            ).to.deep.equal({
+                selectedMammal: initialState.selectedMammal,
+                selectedBird: newBird,
+                selectedFish: initialState.selectedFish,
+                mammals,
+                birds,
+                fish
+            });
         });
     });
 
     describe('SET_FISH', () => {
         const newFish = getRandomAnimal(fish);
         xit('sets fish to animal in action creator (non-mutating)', () => {
-            testStore.dispatch({ type: 'SET_FISH', animal: newFish });
-            const newState = testStore.getState();
-            expect(newState.selectedFish).to.be.deep.equal(newFish);
-            expect(newState.selectedMammal).to.be.deep.equal("Tiger");
-            expect(newState.selectedBird).to.be.deep.equal("Eagle");
+            expect(
+                mainReducer(undefined, { type: 'SET_FISH', animal: newFish })
+            ).to.deep.equal({
+                selectedMammal: initialState.selectedMammal,
+                selectedBird: initialState.selectedBird,
+                selectedFish: newFish,
+                mammals,
+                birds,
+                fish
+            });
         });
     });
 
     describe('SET_REPTILE', () => {
         xit('tries to use invalid action type', () => {
-            testStore.dispatch({ type: 'SET_REPTILE', animal: "Ball Python" });
-            const newState = testStore.getState();
-            expect(newState).to.be.deep.equal(initialState);
+            expect(
+                mainReducer(undefined, { type: 'SET_REPTILE', animal: "Ball Python" })
+            ).to.deep.equal(initialState);
         });
     });
 
