@@ -25,35 +25,35 @@ describe('React components', () => {
             exhibit = shallow(<Exhibit animals={animals} selectedAnimal={selectedAnimal}/>);
         });
 
-        xit('has an initial *local* state with a selectedAnimal', () => {
+        it('has an initial *local* state with a selectedAnimal', () => {
             expect(exhibit.state()).to.be.deep.equal({selectedAnimal});
         });
 
-        xit('uses <AnimalSelect /> and <Cage />', () => {
+        it('uses <AnimalSelect /> and <Cage />', () => {
             expect(exhibit.find(Cage).length).to.be.equal(1);
             expect(exhibit.find(AnimalSelect).length).to.be.equal(1);
         });
 
-        xit('passes its own animal prop to <Cage />', () => {
+        it('passes its own animal prop to <Cage />', () => {
             expect(exhibit.find(Cage).props().selectedAnimal).to.be.equal(selectedAnimal);
         });
 
-        xit('passes its own animals prop to <AnimalSelect />', () => {
+        it('passes its own animals prop to <AnimalSelect />', () => {
             expect(exhibit.find(AnimalSelect).props().animals).to.be.deep.equal(animals);
         });
 
-        xit('has a setAnimal function that takes in an animal and sets the state', () => {
+        it('has a setAnimal funsction that takes in an animal and sets the state', () => {
             let newAnimal = getRandomAnimal();
             expect(exhibit.instance().setAnimal).to.be.function;
             exhibit.instance().setAnimal(newAnimal);
             expect(exhibit.state()).to.be.deep.equal({selectedAnimal: newAnimal})
         });        
 
-        xit('ensures setAnimal function is properly bound', () => {
+        it('ensures setAnimal function is properly bound', () => {
             expect(exhibit.instance().setAnimal.hasOwnProperty('prototype')).to.be.false;
         });
 
-        xit('passes its own setAnimal prop to <AnimalSelect /> as submitAnimal', () => {
+        it('passes its own setAnimal prop to <AnimalSelect /> as submitAnimal', () => {
             expect(exhibit.find(AnimalSelect).props().submitAnimal).to.be.equal(exhibit.instance().setAnimal);
         });
 
@@ -67,7 +67,7 @@ describe('React components', () => {
             cage = shallow(<Cage selectedAnimal={animal} />);
         });
 
-        xit('should be a <div> with an expected background', () => {
+        it('should be a <div> with an expected background', () => {
             expect(cage.is('div')).to.be.equal(true);
             expect(cage.get(0).props.style.backgroundImage).to.be.equal(`url(./src/img/${animal}.gif`);
         });
@@ -82,11 +82,11 @@ describe('React components', () => {
             animalSelect = shallow(<AnimalSelect submitAnimal={setAnimalSpy} animals={animals} />);
         });
 
-        xit('should be a form', () => {
+        it('should be a form', () => {
             expect(animalSelect.is('form')).to.be.true;
         });
 
-        xit('form should have a select that lists all the animals as options', () => {
+        it('form should have a select that lists all the animals as options', () => {
             expect(animalSelect.find('select').length).to.be.equal(1);
             // loops through each option in the select
             // determines if the option's key is equivalent to the animal
@@ -97,13 +97,13 @@ describe('React components', () => {
             })
         });
 
-        xit('should have a label to describe the select', () => {
+        it('should have a label to describe the select', () => {
             const selectLabel = animalSelect.find('label')
             expect(selectLabel.length).to.be.equal(1);
             expect(selectLabel.text()).to.be.equal("Select an Animal: ");
         });
 
-        xit('select should have an onChange event that submits the new animal', () => {
+        it('select should have an onChange event that submits the new animal', () => {
             expect(animalSelect.props('select').onChange).to.be.function;
             // choosing a random animal
             let animal = getRandomAnimal()
