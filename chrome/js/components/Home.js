@@ -3,6 +3,9 @@
  */
 
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import store from '../store';
+
 import {Navbar, FormGroup, FormControl, Button, Well} from 'react-bootstrap';
 
 export class Home extends Component {
@@ -21,9 +24,9 @@ export class Home extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        location: state.result.location
+        restaurants: state.result.restaurants
     }
-}
+};
 
 export default connect(
     mapStateToProps,

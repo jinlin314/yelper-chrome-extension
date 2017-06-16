@@ -4,18 +4,18 @@
 
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Link} from 'react-router';
 import store from '../store';
 import {Navbar, FormGroup, FormControl, Button, Well} from 'react-bootstrap';
 
 import axios from 'axios';
-import {yelpSearch} from '../utils'
+import {yelpSearch} from '../reducers/restaurant'
+// import {yelpSearch} from '../utils'
 
 export class Navigation extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedFilter: "all",
+            selectedFilter: "keywords",
             inputValue: ''
         }
 
@@ -42,7 +42,8 @@ export class Navigation extends Component {
             .then(res => res.data.results)
             .then(results => {
                 const address = results[3].formatted_address;
-                yelpSearch(keywords, filterType, address);
+                // yelpSearch(keywords, filterType, address);
+                store.dispatch(yelpSearch(keywords, filterType, address));
             })
             .catch(console.error)
 
@@ -60,7 +61,7 @@ export class Navigation extends Component {
                         <Navbar>
                             <Navbar.Header>
                                 <Navbar.Brand>
-                                    <a href="#">Yelper Eater</a>
+                                    <a href="#">YelpEater</a>
                                 </Navbar.Brand>
                                 <Navbar.Toggle />
                             </Navbar.Header>
@@ -70,8 +71,6 @@ export class Navigation extends Component {
                                         <a href="#" className="dropdown-toggle" data-toggle="dropdown">{this.state.selectedFilter}<b className="caret"></b></a>
                                         <ul className="dropdown-menu">
                                             <li><a onClick={()=>this.setFilter("keywords")}>keywords</a></li>
-                                            <li className="divider"></li>
-                                            <li><a onClick={()=>this.setFilter("business")}>Cuisine</a></li>
                                             <li><a onClick={()=>this.setFilter("delivery")}>Delivery</a></li>
                                         </ul>
                                         {' '}
@@ -91,7 +90,7 @@ export class Navigation extends Component {
                             <Navbar>
                                 <Navbar.Header>
                                     <Navbar.Brand>
-                                        <a href="#">Yelper Eater</a>
+                                        <a href="#">YelpEater</a>
                                     </Navbar.Brand>
                                     <Navbar.Toggle />
                                 </Navbar.Header>
@@ -111,7 +110,7 @@ const mapStateToProps = (state) => {
     return {
         location: state.result.location
     }
-}
+};
 
 export default connect(
     mapStateToProps,
