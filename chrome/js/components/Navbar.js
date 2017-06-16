@@ -75,10 +75,11 @@ export class Navigation extends Component {
                                         </ul>
                                         {' '}
                                         <FormGroup>
-                                            <FormControl name="keywords" type="text" placeholder="Search" />
+                                            <FormControl name="keywords" id="searchBox" type="text" placeholder="Search" />
                                         </FormGroup>
                                         {' '}
                                         <Button type="submit" onClick={this.geoFindMe}>Search</Button>
+                                        <Button><span className="glyphicon glyphicon-time"></span></Button>
                                     </Navbar.Form>
                                 </form>
                             </Navbar.Collapse>

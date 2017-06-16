@@ -7,7 +7,29 @@
 body, section {			/* Change width and height to own preferences */
 	width: 500px;
 	height: 400px;
+	padding: 15px;
 	overflow-x: hidden;
+}
+
+#searchBox {
+	width: 35vh;
+}
+
+.img {
+	width: 22vh;
+	display: inline;
+}
+
+.imgCol {
+	width: 22vh;
+}
+
+.infoCol {
+	width: 65vh;
+}
+
+.addFav {
+	width: 8vh;
 }
 
 /* Basic style tweaks */

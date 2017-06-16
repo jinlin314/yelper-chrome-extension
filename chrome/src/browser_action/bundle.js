@@ -36080,13 +36080,18 @@
 	                                    _react2.default.createElement(
 	                                        _reactBootstrap.FormGroup,
 	                                        null,
-	                                        _react2.default.createElement(_reactBootstrap.FormControl, { name: 'keywords', type: 'text', placeholder: 'Search' })
+	                                        _react2.default.createElement(_reactBootstrap.FormControl, { name: 'keywords', id: 'searchBox', type: 'text', placeholder: 'Search' })
 	                                    ),
 	                                    ' ',
 	                                    _react2.default.createElement(
 	                                        _reactBootstrap.Button,
 	                                        { type: 'submit', onClick: this.geoFindMe },
 	                                        'Search'
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        _reactBootstrap.Button,
+	                                        null,
+	                                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-time' })
 	                                    )
 	                                )
 	                            )
@@ -57296,43 +57301,93 @@
 	                'div',
 	                null,
 	                _react2.default.createElement(
-	                    'h1',
+	                    'section',
 	                    null,
-	                    'this is result component'
-	                ),
-	                restaurants.map(function (restaurant) {
-	                    return _react2.default.createElement(
-	                        'div',
-	                        null,
-	                        _react2.default.createElement(
-	                            _reactBootstrap.Well,
-	                            { bsStyle: 'small' },
+	                    restaurants.map(function (restaurant, i) {
+	                        return _react2.default.createElement(
+	                            'div',
+	                            { key: i },
 	                            _react2.default.createElement(
-	                                'h4',
+	                                _reactBootstrap.Table,
 	                                null,
-	                                restaurant.categories.title
-	                            ),
-	                            _react2.default.createElement(
-	                                'p',
-	                                null,
-	                                restaurant.location.display_address[0] + ', ' + restaurant.location.display_address[1]
-	                            ),
-	                            _react2.default.createElement(
-	                                'p',
-	                                null,
-	                                restaurant.phone
-	                            ),
-	                            _react2.default.createElement(
-	                                'p',
-	                                null,
-	                                'price: ',
-	                                restaurant.price,
-	                                ', rating: ',
-	                                restaurant.rating
+	                                _react2.default.createElement(
+	                                    'tbody',
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        'tr',
+	                                        null,
+	                                        _react2.default.createElement(
+	                                            'td',
+	                                            { className: 'imgCol' },
+	                                            _react2.default.createElement(
+	                                                'a',
+	                                                { href: restaurant.url },
+	                                                _react2.default.createElement(_reactBootstrap.Image, { className: 'img', alt: '171x180', src: restaurant.image_url })
+	                                            )
+	                                        ),
+	                                        _react2.default.createElement(
+	                                            'td',
+	                                            { className: 'infoCol' },
+	                                            _react2.default.createElement(
+	                                                _reactBootstrap.Panel,
+	                                                null,
+	                                                _react2.default.createElement(
+	                                                    'p',
+	                                                    { className: 'restaurantName' },
+	                                                    _react2.default.createElement(
+	                                                        'a',
+	                                                        { href: restaurant.url },
+	                                                        restaurant.name
+	                                                    )
+	                                                ),
+	                                                _react2.default.createElement(
+	                                                    'p',
+	                                                    null,
+	                                                    restaurant.location.display_address[0] + ', ' + restaurant.location.display_address[1]
+	                                                ),
+	                                                _react2.default.createElement(
+	                                                    'p',
+	                                                    null,
+	                                                    restaurant.phone
+	                                                ),
+	                                                _react2.default.createElement(
+	                                                    'p',
+	                                                    null,
+	                                                    'price: ',
+	                                                    restaurant.price,
+	                                                    ', rating: ',
+	                                                    restaurant.rating
+	                                                )
+	                                            )
+	                                        ),
+	                                        _react2.default.createElement(
+	                                            'td',
+	                                            { className: 'addFav' },
+	                                            _react2.default.createElement(
+	                                                'p',
+	                                                null,
+	                                                _react2.default.createElement(
+	                                                    _reactBootstrap.Button,
+	                                                    null,
+	                                                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-star-empty' })
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'p',
+	                                                null,
+	                                                _react2.default.createElement(
+	                                                    _reactBootstrap.Button,
+	                                                    null,
+	                                                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-edit' })
+	                                                )
+	                                            )
+	                                        )
+	                                    )
+	                                )
 	                            )
-	                        )
-	                    );
-	                })
+	                        );
+	                    })
+	                )
 	            );
 	        }
 	    }]);

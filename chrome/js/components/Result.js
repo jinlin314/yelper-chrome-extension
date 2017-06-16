@@ -3,7 +3,7 @@
  */
 
 import React, {Component} from 'react';
-import {Well} from 'react-bootstrap';
+import {Well, Table, Grid, Col, Row, Image, Panel, Button} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import store from '../store';
 
@@ -16,25 +16,40 @@ export class Result extends Component {
         const restaurants = this.props.restaurants;
         return  (
             <div>
-                <h1>this is result component</h1>
+                <section>
                 {
-                    restaurants.map(restaurant => {
+                    restaurants.map((restaurant,i) => {
                         return (
-                            <div>
-                                <Well bsStyle="small">
-                                    <h4>{restaurant.categories.title}</h4>
-                                    <p>{restaurant.location.display_address[0] + ', ' + restaurant.location.display_address[1]}</p>
-                                    <p>{restaurant.phone}</p>
-                                    <p>
-                                        price: {restaurant.price},
-                                        rating: {restaurant.rating}
-                                    </p>
-
-                                </Well>
+                            <div key={i}>
+                                <Table>
+                                    <tbody>
+                                        <tr>
+                                            <td className="imgCol">
+                                                <a href={restaurant.url}><Image className="img" alt="171x180" src={restaurant.image_url} /></a>
+                                            </td>
+                                            <td className="infoCol">
+                                                <Panel>
+                                                    <p className="restaurantName"><a href={restaurant.url}>{restaurant.name}</a></p>
+                                                    <p>{restaurant.location.display_address[0] + ', ' + restaurant.location.display_address[1]}</p>
+                                                    <p>{restaurant.phone}</p>
+                                                    <p>
+                                                        price: {restaurant.price},
+                                                        rating: {restaurant.rating}
+                                                    </p>
+                                                </Panel>
+                                            </td>
+                                            <td className="addFav">
+                                                <p><Button><span className="glyphicon glyphicon-star-empty"></span></Button></p>
+                                                <p><Button><span className="glyphicon glyphicon-edit"></span></Button></p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </Table>
                             </div>
                         )
                     })
                 }
+                </section>
             </div>
         )
     }
