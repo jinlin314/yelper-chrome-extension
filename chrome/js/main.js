@@ -7,11 +7,10 @@ import {Provider} from 'react-redux'
 import store from './store'
 
 import App from './components/App';
-import Result from './components/Result';
 
 render(
     <Provider store={store}>
         <App />
     </Provider>,
     document.getElementById('app')
-)
+);

@@ -3,48 +3,82 @@
  */
 
 import React, {Component} from 'react';
-import {Link} from 'react-router';
-import {Navbar, FormGroup, FormControl, Button} from 'react-bootstrap';
+import {Well, Table, Grid, Col, Row, Image, Panel, Button} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import store from '../store';
-import {getAll, getByCuisine, getByPrice, select, add} from '../reducers/restaurant'
 
-import yelp from 'yelp-fusion';
-import {clientId, clientSecret} from '../secret'
-
-
-
-export default class Result extends Component {
+export class Result extends Component {
     constructor(props) {
         super(props);
-        this.geoFindMe = this.geoFindMe.bind(this);
+        this.state = {
+            selected: {}
+        };
+
+        this.addFavorite = this.addFavorite.bind(this);
     }
 
-    geoFindMe() {
-        var output = document.getElementById("testGeo");
+    // use the restaurants' phone numbers as the keys, since they are unique
+    addFavorite(phone) {
+        // Save it using the Chrome extension storage API.
+        chrome.storage.sync.set({'value': theValue}, function() {
+            // Notify that we saved.
+            message('Settings saved');
+        });
 
-        function success(position) {
-            var latitude  = position.coords.latitude;
-            var longitude = position.coords.longitude;
-
-            output.innerHTML = '<p>Latitude is ' + latitude + ' <br>Longitude is ' + longitude + '</p>';
-
-        }
-
-        function error() {
-            output.innerHTML = "Unable to retrieve your location";
-        }
-
-        output.innerHTML = "<p>Locating…</p>";
-
-        navigator.geolocation.getCurrentPosition(success, error);
     }
+
 
     render() {
+        const restaurants = this.props.restaurants;
         return  (
             <div>
-
+                <section>
+                    {
+                        restaurants.map((restaurant,i) => {
+                            return (
+                                <div key={i}>
+                                    <Table>
+                                        <tbody>
+                                        <tr>
+                                            <td className="imgCol">
+                                                <a href={restaurant.url}><Image className="img" alt="171x180" src={restaurant.image_url} /></a>
+                                            </td>
+                                            <td className="infoCol">
+                                                <Panel>
+                                                    <p className="restaurantName"><a href={restaurant.url}>{restaurant.name}</a></p>
+                                                    <p>{restaurant.location.display_address[0] + ', ' + restaurant.location.display_address[1]}</p>
+                                                    <p>{restaurant.phone}</p>
+                                                    <p>
+                                                        price: {restaurant.price},
+                                                        rating: {restaurant.rating}
+                                                    </p>
+                                                </Panel>
+                                            </td>
+                                            <td className="addFav">
+                                                <p><Button onClick={() => this.addFavorite(parseInt(restaurant.phone.slice(1)))}><span className="glyphicon glyphicon-star-empty"></span></Button></p>
+                                                <p><Button><span className="glyphicon glyphicon-edit"></span></Button></p>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </Table>
+                                </div>
+                            )
+                        })
+                    }
+                </section>
             </div>
         )
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        restaurants: state.result.restaurants
+    }
+};
+
+export default connect(
+    mapStateToProps,
+    {},
+)(Result)
+

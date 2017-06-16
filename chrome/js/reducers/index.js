@@ -6,7 +6,7 @@ import { combineReducers } from 'redux'
 
 const rootReducer = combineReducers({
     result: require('./restaurant').default,
-
+    favorites: require('./favorites').default,
 })
 
 export default rootReducer
