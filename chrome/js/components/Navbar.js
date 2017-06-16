@@ -10,7 +10,7 @@ import {Navbar, FormGroup, FormControl, Button, Well} from 'react-bootstrap';
 
 import yelp from 'yelp-fusion';
 import {clientId, clientSecret} from '../secret'
-
+import axios from 'axios'
 
 
 export default class Navigation extends Component {
@@ -30,13 +30,18 @@ export default class Navigation extends Component {
     // function to locate the current physical location
     geoFindMe() {
         let output = document.getElementById("testGeo");
-        let location = null;
 
         const success = (position) => {
             let latitude  = position.coords.latitude;
             let longitude = position.coords.longitude;
-            output.innerHTML = '<p>Latitude is ' + latitude + '<br>Longitude is ' + longitude + '</p>';
-            this.setState({location: [latitude, longitude]})
+
+            axios.get(`http://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&sensor=true`)
+                .then(res => res.data.results)
+                .then(results => {
+                    this.setState({location: results[3].formatted_address})
+                    output.innerHTML = `<p>Current location is ${this.state.location}`;
+                })
+                .catch(console.error)
         }
 
         const error = () => {
@@ -47,7 +52,6 @@ export default class Navigation extends Component {
         output.innerHTML = "<p>Searching for current location...</p>";
 
         navigator.geolocation.getCurrentPosition(success, error);
-
 }
 
     // Filter the narrow the search results
