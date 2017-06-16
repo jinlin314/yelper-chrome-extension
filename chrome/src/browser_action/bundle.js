@@ -26610,35 +26610,12 @@
 	            this.setState({ selectedFilter: filterType });
 	        }
 	
-	        // function to locate the current physical location
-	        // geoFindMe() {
-	        //     let output = document.getElementById("testGeo");
-	        //
-	        //     const success = (position) => {
-	        //         let latitude  = position.coords.latitude;
-	        //         let longitude = position.coords.longitude;
-	        //
-	        //         this.setState({location: [latitude, longitude]})
-	        //         output.innerHTML = `<p>Current GPS location is ${this.state.location}`;
-	        //     };
-	        //
-	        //     const error = () => {
-	        //         this.setState({location: null});
-	        //         output.innerHTML = "Unable to retrieve your location";
-	        //     };
-	        //
-	        //     output.innerHTML = "<p>Searching for current location...</p>";
-	        //
-	        //     navigator.geolocation.getCurrentPosition(success, error);
-	        // }
+	        // on submit, collect all datas, pass them into yelpSearch
 	
 	    }, {
 	        key: 'onSearchSubmit',
 	        value: function onSearchSubmit(event) {
 	            event.preventDefault();
-	            console.log('this.props', this.props);
-	
-	            // store.dispatch(geoFindMe());
 	
 	            var keywords = event.target.keywords.value;
 	            var filterType = this.state.selectedFilter;
