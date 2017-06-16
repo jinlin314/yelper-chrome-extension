@@ -4,6 +4,8 @@ import rootReducer from './reducers'
 import {createLogger} from 'redux-logger'
 import thunkMiddleware from 'redux-thunk'
 
+import {geoFindMe} from './reducers/restaurant';
+
 const store = createStore(
     rootReducer,
     composeWithDevTools(
@@ -12,6 +14,9 @@ const store = createStore(
             createLogger({collapsed: true})
         )
     )
-)
+);
 
-export default store
+export default store;
+
+// get the location at start
+store.dispatch(geoFindMe());
