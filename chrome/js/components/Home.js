@@ -16,7 +16,7 @@ export class Home extends Component {
     render() {
         return (
             <div>
-                <h1>this is the home container</h1>
+                <h1>home</h1>
             </div>
         )
     }

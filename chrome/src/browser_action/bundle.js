@@ -26308,8 +26308,8 @@
 	var _redux = __webpack_require__(214);
 	
 	var rootReducer = (0, _redux.combineReducers)({
-	  result: __webpack_require__(244).default
-	
+	  result: __webpack_require__(244).default,
+	  favorites: __webpack_require__(596).default
 	}); /**
 	     * Created by jinlin on 6/15/17.
 	     */
@@ -26341,16 +26341,19 @@
 	// /**
 	//  * Created by jinlin on 6/15/17.
 	//  */
+	var GET_RESTAURANTS_NEARBY = 'GET_RESTAURANTS_BY_NEARBY';
 	var GET_RESTAURANTS_BY_KEYWORDS = 'GET_RESTAURANTS_BY_KEYWORDS';
 	var GET_RESTAURANTS_BY_DELIVERY = 'GET_RESTAURANTS_BY_DELIVERY';
 	var GET_RESTAURANTS_BY_BUSINESS = 'GET_RESTAURANTS_BY_BUSINESS';
 	var GET_RESTAURANTS_REVIEWS = 'GET_RESTAURANTS_REVIEWS';
 	var SELECT_RESTAURANT = 'SELECT_RESTAURANT';
-	var ADD_FAVORITE = 'ADD_FAVORITE';
 	var GET_LOCATION = 'GET_LOCATION';
 	
 	// /* --------------    ACTION CREATORS    ----------------- */
 	
+	var getNearBy = function getNearBy(restaurants) {
+	    return { type: GET_RESTAURANTS_NEARBY, restaurants: restaurants };
+	};
 	var getByKeywords = function getByKeywords(restaurants) {
 	    return { type: GET_RESTAURANTS_BY_KEYWORDS, restaurants: restaurants };
 	};
@@ -26363,36 +26366,44 @@
 	var select = function select(restaurant) {
 	    return { type: SELECT_RESTAURANT, restaurant: restaurant };
 	};
-	var add = function add(restaurant) {
-	    return { type: ADD_FAVORITE, restaurants: restaurants };
-	};
 	var locate = function locate(location) {
 	    return { type: GET_LOCATION, location: location };
 	};
 	
 	/* ------------------    REDUCER    --------------------- */
+	var initial_state = {
+	    restaurants: [],
+	    restaurant: null,
+	    location: null,
+	    reviews: [],
+	    search: false
+	};
 	
 	function reducer() {
-	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { restaurants: [], restaurant: null, location: null, reviews: [] };
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initial_state;
 	    var action = arguments[1];
 	
 	    var newState = Object.assign({}, state);
 	
 	    switch (action.type) {
+	        case GET_RESTAURANTS_NEARBY:
+	            newState.restaurants = action.restaurants;
+	            break;
 	        case GET_RESTAURANTS_BY_KEYWORDS:
 	            newState.restaurants = action.restaurants;
+	            newState.search = true;
 	            break;
 	        case GET_RESTAURANTS_BY_DELIVERY:
 	            newState.restaurants = action.restaurants;
+	            newState.search = true;
 	            break;
 	        case GET_RESTAURANTS_REVIEWS:
 	            newState.reviews = action.reviews;
+	            newState.search = true;
 	            break;
 	        case SELECT_RESTAURANT:
 	            newState.restaurant = action.restaurant;
-	            break;
-	        case ADD_FAVORITE:
-	            newState.restaurant = action.restaurant;
+	            newState.search = true;
 	            break;
 	        case GET_LOCATION:
 	            newState.location = action.location;
@@ -26447,13 +26458,23 @@
 	                }).catch(function (e) {
 	                    console.log(e);
 	                });
-	            } else {
-	                // search by keywords restaurants nearby
+	            } else if (filterType === 'keywords') {
 	                var searchRequest = {
 	                    term: keywords,
 	                    location: location
 	                };
 	                client.search(searchRequest).then(function (response) {
+	                    var restaurants = response.jsonBody.businesses;
+	                    console.log(restaurants);
+	                    dispatch(getByKeywords(restaurants));
+	                });
+	            } else {
+	                // search by keywords restaurants nearby
+	                var _searchRequest = {
+	                    term: "restaurant",
+	                    location: location
+	                };
+	                client.search(_searchRequest).then(function (response) {
 	                    var restaurants = response.jsonBody.businesses;
 	                    console.log(restaurants);
 	                    dispatch(getByKeywords(restaurants));
@@ -35867,6 +35888,8 @@
 	
 	var _Result2 = _interopRequireDefault(_Result);
 	
+	var _restaurant = __webpack_require__(244);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -35887,6 +35910,7 @@
 	    _createClass(App, [{
 	        key: 'render',
 	        value: function render() {
+	            console.log('App props, ', this.props);
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -35898,7 +35922,7 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    null,
-	                    this.props.restaurants.length > 0 ? _react2.default.createElement(_Result2.default, null) : _react2.default.createElement(_Home2.default, null)
+	                    this.props.searchBool ? _react2.default.createElement(_Result2.default, null) : _react2.default.createElement(_Home2.default, null)
 	                )
 	            );
 	        }
@@ -35909,7 +35933,9 @@
 	
 	var mapStateToProps = function mapStateToProps(state) {
 	    return {
-	        restaurants: state.result.restaurants
+	        restaurants: state.result.restaurants,
+	        searchBool: state.result.search,
+	        location: state.result.location
 	    };
 	};
 	
@@ -36011,7 +36037,6 @@
 	        value: function render() {
 	            var _this2 = this;
 	
-	            console.log('hello');
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -57232,7 +57257,7 @@
 	                _react2.default.createElement(
 	                    'h1',
 	                    null,
-	                    'this is the home container'
+	                    'home'
 	                )
 	            );
 	        }
@@ -57290,12 +57315,33 @@
 	    function Result(props) {
 	        _classCallCheck(this, Result);
 	
-	        return _possibleConstructorReturn(this, (Result.__proto__ || Object.getPrototypeOf(Result)).call(this, props));
+	        var _this = _possibleConstructorReturn(this, (Result.__proto__ || Object.getPrototypeOf(Result)).call(this, props));
+	
+	        _this.state = {
+	            selected: {}
+	        };
+	
+	        _this.addFavorite = _this.addFavorite.bind(_this);
+	        return _this;
 	    }
 	
+	    // use the restaurants' phone numbers as the keys, since they are unique
+	
+	
 	    _createClass(Result, [{
+	        key: 'addFavorite',
+	        value: function addFavorite(phone) {
+	            // Save it using the Chrome extension storage API.
+	            chrome.storage.sync.set({ 'value': theValue }, function () {
+	                // Notify that we saved.
+	                message('Settings saved');
+	            });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var _this2 = this;
+	
 	            var restaurants = this.props.restaurants;
 	            return _react2.default.createElement(
 	                'div',
@@ -57368,7 +57414,9 @@
 	                                                null,
 	                                                _react2.default.createElement(
 	                                                    _reactBootstrap.Button,
-	                                                    null,
+	                                                    { onClick: function onClick() {
+	                                                            return _this2.addFavorite(parseInt(restaurant.phone.slice(1)));
+	                                                        } },
 	                                                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-star-empty' })
 	                                                )
 	                                            ),
@@ -57402,6 +57450,87 @@
 	};
 	
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, {})(Result);
+
+/***/ }),
+/* 596 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = reducer;
+	// /**
+	//  * Created by jinlin on 6/15/17.
+	//  */
+	
+	// /* ------------------    ACTIONS    --------------------- */
+	
+	var GET_ALL_FAVORITES = 'GET_ALL_FAVORITES';
+	var ADD_FAVORITE = 'ADD_FAVORITE';
+	var REMOVE_FAVORITE = 'REMOVE_FAVORITE';
+	var CLOSE_FAVORITES = 'CLOSE_FAVORITES';
+	
+	// /* --------------    ACTION CREATORS    ----------------- */
+	
+	var getAll = function getAll(favorites) {
+	    return { type: GET_ALL_FAVORITES, favorites: favorites };
+	};
+	var add = function add(target) {
+	    return { type: ADD_FAVORITE, favorites: favorites };
+	};
+	var remove = function remove(target) {
+	    return { type: REMOVE_FAVORITE, favorites: favorites };
+	};
+	var closeFavorite = function closeFavorite() {
+	    return { type: CLOSE_FAVORITES };
+	};
+	
+	/* ------------------    REDUCER    --------------------- */
+	var initial_state = {
+	    favorites: [],
+	    favorite: {},
+	    showBool: false
+	};
+	
+	function reducer() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initial_state;
+	    var action = arguments[1];
+	
+	    var newState = Object.assign({}, state);
+	
+	    switch (action.type) {
+	        case GET_ALL_FAVORITES:
+	            newState.favorites = action.favorites;
+	            newState.showBool = true;
+	            break;
+	        case ADD_FAVORITE:
+	            newState.favorite = action.favorite;
+	            break;
+	        case REMOVE_FAVORITE:
+	            newState.favorites = action.favorites;
+	            break;
+	        case CLOSE_FAVORITES:
+	            newState.showBool = false;
+	            break;
+	        default:
+	            return state;
+	    }
+	    return newState;
+	}
+	
+	// /* ------------       DISPATCHERS     ------------------ */
+	
+	// export const getAllFavorites = () => dispatch => {
+	//     // favorites = get from the chrome.storage
+	//     // dispatch(getALL(favorites)
+	// }
+	//
+	// export const addFavorite = (target) => dispatch => {
+	//     // favorites = get from the chrome.storage
+	//     // dispatch(add(target)
+	// }
 
 /***/ })
 /******/ ]);

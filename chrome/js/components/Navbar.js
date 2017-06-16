@@ -51,7 +51,6 @@ export class Navigation extends Component {
 
 
     render() {
-        console.log('hello');
         return (
             <div>
                 {

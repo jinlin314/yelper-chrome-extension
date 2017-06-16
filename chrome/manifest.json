@@ -26,7 +26,8 @@
     "clipboardWrite",
     "tts",
     "ttsEngine",
-    "geolocation"
+    "geolocation",
+    "storage"
   ],
   "omnibox": {
     "keyword": "extensionizr"

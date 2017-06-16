@@ -44,5 +44,4 @@ export const yelpSearch = (keywords, filterType, location) => {
 
     }).catch(e => {
         console.log(e);
-    });
 }

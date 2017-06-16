@@ -10,19 +10,35 @@ import store from '../store';
 export class Result extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            selected: {}
+        };
+
+        this.addFavorite = this.addFavorite.bind(this);
     }
+
+    // use the restaurants' phone numbers as the keys, since they are unique
+    addFavorite(phone) {
+        // Save it using the Chrome extension storage API.
+        chrome.storage.sync.set({'value': theValue}, function() {
+            // Notify that we saved.
+            message('Settings saved');
+        });
+
+    }
+
 
     render() {
         const restaurants = this.props.restaurants;
         return  (
             <div>
                 <section>
-                {
-                    restaurants.map((restaurant,i) => {
-                        return (
-                            <div key={i}>
-                                <Table>
-                                    <tbody>
+                    {
+                        restaurants.map((restaurant,i) => {
+                            return (
+                                <div key={i}>
+                                    <Table>
+                                        <tbody>
                                         <tr>
                                             <td className="imgCol">
                                                 <a href={restaurant.url}><Image className="img" alt="171x180" src={restaurant.image_url} /></a>
@@ -39,16 +55,16 @@ export class Result extends Component {
                                                 </Panel>
                                             </td>
                                             <td className="addFav">
-                                                <p><Button><span className="glyphicon glyphicon-star-empty"></span></Button></p>
+                                                <p><Button onClick={() => this.addFavorite(parseInt(restaurant.phone.slice(1)))}><span className="glyphicon glyphicon-star-empty"></span></Button></p>
                                                 <p><Button><span className="glyphicon glyphicon-edit"></span></Button></p>
                                             </td>
                                         </tr>
-                                    </tbody>
-                                </Table>
-                            </div>
-                        )
-                    })
-                }
+                                        </tbody>
+                                    </Table>
+                                </div>
+                            )
+                        })
+                    }
                 </section>
             </div>
         )
