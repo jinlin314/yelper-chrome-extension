@@ -26261,11 +26261,15 @@
 	
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 	
+	var _restaurant = __webpack_require__(244);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var store = (0, _redux.createStore)(_reducers2.default, (0, _reduxDevtoolsExtension.composeWithDevTools)((0, _redux.applyMiddleware)(_reduxThunk2.default, (0, _reduxLogger.createLogger)({ collapsed: true }))));
 	
 	exports.default = store;
+	
+	// get the location at start
 
 /***/ }),
 /* 242 */
@@ -26323,13 +26327,14 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.geoFindMe = undefined;
 	exports.default = reducer;
 	
 	var _reactRouter = __webpack_require__(182);
 	
 	// /* ------------------    ACTIONS    --------------------- */
 	
-	var GET_ALL_RESTAURANTS = 'GET_ALL_RESTAURANTS'; // /**
+	var GET_RESTAURANTS_BY_KEYWORDS = 'GET_RESTAURANTS_BY_KEYWORDS'; // /**
 	//  * Created by jinlin on 6/15/17.
 	//  */
 	
@@ -26338,11 +26343,12 @@
 	var GET_RESTAURANTS_BY_REVIEWS = 'GET_RESTAURANTS_BY_REVIEWS';
 	var SELECT_RESTAURANT = 'SELECT_RESTAURANT';
 	var ADD_FAVORITE = 'ADD_FAVORITE';
+	var GET_LOCATION = 'GET_LOCATION';
 	
 	// /* --------------    ACTION CREATORS    ----------------- */
 	
 	var getAll = function getAll(restaurants) {
-	    return { type: GET_ALL_RESTAURANTS, restaurants: restaurants };
+	    return { type: GET_RESTAURANTS_BY_KEYWORDS, restaurants: restaurants };
 	};
 	var getByCuisine = function getByCuisine(restaurants) {
 	    return { type: GET_RESTAURANTS_BY_CUISINE, restaurants: restaurants };
@@ -26359,17 +26365,20 @@
 	var add = function add(restaurant) {
 	    return { type: ADD_FAVORITE, restaurants: restaurants };
 	};
+	var locate = function locate(loaction) {
+	    return { type: GET_LOCATION, loaction: loaction };
+	};
 	
 	/* ------------------    REDUCER    --------------------- */
 	
 	function reducer() {
-	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { restaurants: [], restaurant: null };
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { restaurants: [], restaurant: null, location: null };
 	    var action = arguments[1];
 	
 	    var newState = Object.assign({}, state);
 	
 	    switch (action.type) {
-	        case GET_ALL_RESTAURANTS:
+	        case GET_RESTAURANTS_BY_KEYWORDS:
 	            newState.restaurants = action.restaurants;
 	            break;
 	        case GET_RESTAURANTS_BY_CUISINE:
@@ -26387,6 +26396,8 @@
 	        case ADD_FAVORITE:
 	            newState.restaurant = action.restaurant;
 	            break;
+	        case GET_LOCATION:
+	            newState.loaction = action.location;
 	        default:
 	            return state;
 	    }
@@ -26403,6 +26414,23 @@
 	//             });
 	//     };
 	// };
+	
+	var geoFindMe = exports.geoFindMe = function geoFindMe() {
+	    console.log("in the dispatcher");
+	
+	    var success = function success(position) {
+	        var latitude = position.coords.latitude;
+	        var longitude = position.coords.longitude;
+	        var location = [latitude, longitude];
+	        dispatch(locate(location));
+	    };
+	
+	    var error = function error() {
+	        dispatch(locate(null));
+	    };
+	
+	    navigator.geolocation.getCurrentPosition(success, error);
+	};
 
 /***/ }),
 /* 245 */
@@ -26515,6 +26543,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.Navigation = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -26532,15 +26561,11 @@
 	
 	var _reactBootstrap = __webpack_require__(249);
 	
-	var _yelpFusion = __webpack_require__(501);
-	
-	var _yelpFusion2 = _interopRequireDefault(_yelpFusion);
-	
-	var _secret = __webpack_require__(566);
-	
 	var _axios = __webpack_require__(567);
 	
 	var _axios2 = _interopRequireDefault(_axios);
+	
+	var _utils = __webpack_require__(594);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -26552,7 +26577,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by jinlin on 6/15/17.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
-	var Navigation = function (_Component) {
+	var Navigation = exports.Navigation = function (_Component) {
 	    _inherits(Navigation, _Component);
 	
 	    function Navigation(props) {
@@ -26563,70 +26588,71 @@
 	        _this.state = {
 	            selectedFilter: "all",
 	            inputValue: '',
-	            location: null
+	            location: _this.props.location
 	        };
 	
-	        _this.geoFindMe = _this.geoFindMe.bind(_this);
+	        // this.geoFindMe = this.geoFindMe.bind(this);
 	        _this.setFilter = _this.setFilter.bind(_this);
 	        _this.onSearchSubmit = _this.onSearchSubmit.bind(_this);
 	        return _this;
 	    }
 	
-	    // function to locate the current physical location
+	    // Filter the narrow the search results
 	
 	
 	    _createClass(Navigation, [{
-	        key: 'geoFindMe',
-	        value: function geoFindMe() {
-	            var _this2 = this;
-	
-	            var output = document.getElementById("testGeo");
-	
-	            var success = function success(position) {
-	                var latitude = position.coords.latitude;
-	                var longitude = position.coords.longitude;
-	
-	                _axios2.default.get('http://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitude + ',' + longitude + '&sensor=true').then(function (res) {
-	                    return res.data.results;
-	                }).then(function (results) {
-	                    _this2.setState({ location: results[3].formatted_address });
-	                    output.innerHTML = '<p>Current location is ' + _this2.state.location;
-	                }).catch(console.error);
-	            };
-	
-	            var error = function error() {
-	                _this2.setState({ location: null });
-	                output.innerHTML = "Unable to retrieve your location";
-	            };
-	
-	            output.innerHTML = "<p>Searching for current location...</p>";
-	
-	            navigator.geolocation.getCurrentPosition(success, error);
-	        }
-	
-	        // Filter the narrow the search results
-	
-	    }, {
 	        key: 'setFilter',
 	        value: function setFilter(filterType) {
 	            this.setState({ selectedFilter: filterType });
 	        }
 	
-	        // get the keywords inputted by user
+	        // function to locate the current physical location
+	        // geoFindMe() {
+	        //     let output = document.getElementById("testGeo");
+	        //
+	        //     const success = (position) => {
+	        //         let latitude  = position.coords.latitude;
+	        //         let longitude = position.coords.longitude;
+	        //
+	        //         this.setState({location: [latitude, longitude]})
+	        //         output.innerHTML = `<p>Current GPS location is ${this.state.location}`;
+	        //     };
+	        //
+	        //     const error = () => {
+	        //         this.setState({location: null});
+	        //         output.innerHTML = "Unable to retrieve your location";
+	        //     };
+	        //
+	        //     output.innerHTML = "<p>Searching for current location...</p>";
+	        //
+	        //     navigator.geolocation.getCurrentPosition(success, error);
+	        // }
 	
 	    }, {
 	        key: 'onSearchSubmit',
 	        value: function onSearchSubmit(event) {
 	            event.preventDefault();
+	            console.log('in the search handler');
+	
+	            _store2.default.dispatch(geoFindMe());
+	
 	            var keywords = event.target.keywords.value;
-	            var filter = this.state.selectedFilter;
+	            var filterType = this.state.selectedFilter;
+	            var latitude = this.state.location[0];
+	            var longitude = this.state.location[1];
+	
+	            _axios2.default.get('http://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitude + ',' + longitude + '&sensor=true').then(function (res) {
+	                return res.data.results;
+	            }).then(function (results) {
+	                var address = results[3].formatted_address;
+	                (0, _utils.yelpSearch)(keywords, filterType, address);
+	            }).catch(console.error);
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this3 = this;
+	            var _this2 = this;
 	
-	            console.log(this.state.location);
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -26671,9 +26697,9 @@
 	                                        _react2.default.createElement(
 	                                            'a',
 	                                            { onClick: function onClick() {
-	                                                    return _this3.setFilter("all");
+	                                                    return _this2.setFilter("keywords");
 	                                                } },
-	                                            'All Nearby'
+	                                            'keywords'
 	                                        )
 	                                    ),
 	                                    _react2.default.createElement('li', { className: 'divider' }),
@@ -26683,7 +26709,7 @@
 	                                        _react2.default.createElement(
 	                                            'a',
 	                                            { onClick: function onClick() {
-	                                                    return _this3.setFilter("cuisine");
+	                                                    return _this2.setFilter("business");
 	                                                } },
 	                                            'Cuisine'
 	                                        )
@@ -26694,32 +26720,9 @@
 	                                        _react2.default.createElement(
 	                                            'a',
 	                                            { onClick: function onClick() {
-	                                                    return _this3.setFilter("delivery");
+	                                                    return _this2.setFilter("delivery");
 	                                                } },
 	                                            'Delivery'
-	                                        )
-	                                    ),
-	                                    _react2.default.createElement(
-	                                        'li',
-	                                        null,
-	                                        _react2.default.createElement(
-	                                            'a',
-	                                            { onClick: function onClick() {
-	                                                    return _this3.setFilter("reviews");
-	                                                } },
-	                                            'By Reviews'
-	                                        )
-	                                    ),
-	                                    _react2.default.createElement('li', { className: 'divider' }),
-	                                    _react2.default.createElement(
-	                                        'li',
-	                                        null,
-	                                        _react2.default.createElement(
-	                                            'a',
-	                                            { onClick: function onClick() {
-	                                                    return _this3.setFilter("favorites");
-	                                                } },
-	                                            'Favorites'
 	                                        )
 	                                    )
 	                                ),
@@ -26747,7 +26750,13 @@
 	    return Navigation;
 	}(_react.Component);
 	
-	exports.default = Navigation;
+	var mapStateToProps = function mapStateToProps(state) {
+	    return {
+	        results: state.restautantResults.location
+	    };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, {})(_reactBootstrap.Navbar);
 
 /***/ }),
 /* 249 */
@@ -57206,6 +57215,69 @@
 	}(_react.Component);
 	
 	exports.default = Result;
+
+/***/ }),
+/* 594 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.yelpSearch = undefined;
+	
+	var _yelpFusion = __webpack_require__(501);
+	
+	var _yelpFusion2 = _interopRequireDefault(_yelpFusion);
+	
+	var _secret = __webpack_require__(566);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var yelpSearch = exports.yelpSearch = function yelpSearch(keywords, filterType, location) {
+	    // authenticate with yelp API, obtain an access token
+	    _yelpFusion2.default.accessToken(_secret.clientId, _secret.clientSecret).then(function (response) {
+	        var client = _yelpFusion2.default.client(response.jsonBody.access_token);
+	
+	        if (filterType === 'delivery') {
+	            client.transactionSearch('delivery', {
+	                location: location
+	            }).then(function (response) {
+	                console.log(response.jsonBody.businesses);
+	                // console.log(response.jsonBody.businesses[0].name);
+	            }).catch(function (e) {
+	                console.log(e);
+	            });
+	        } else if (filterType === 'business') {
+	            client.business(keywords).then(function (response) {
+	                console.log(response.jsonBody.name);
+	            }).catch(function (e) {
+	                console.log(e);
+	            });
+	        } else if (filterType === 'reviews') {
+	            client.reviews(keywords).then(function (response) {
+	                console.log(response.jsonBody.reviews);
+	            }).catch(function (e) {
+	                console.log(e);
+	            });
+	        } else {
+	            // search by keywords restaurants nearby
+	            var searchRequest = {
+	                term: keywords,
+	                location: location
+	            };
+	            console.log('searchRequest = ', searchRequest);
+	            client.search(searchRequest).then(function (response) {
+	                var firstResult = response.jsonBody.businesses;
+	                var prettyJson = JSON.stringify(firstResult, null, 4);
+	                console.log(prettyJson);
+	            });
+	        }
+	    }).catch(function (e) {
+	        console.log(e);
+	    });
+	};
 
 /***/ })
 /******/ ]);
