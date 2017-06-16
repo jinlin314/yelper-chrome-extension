@@ -1,19 +1,16 @@
-var path = require('path');
 
 module.exports = {
-    devtool: 'sourcemaps',
-    entry: './src/main.js',
+    entry: './chrome/js/main.js',
     output: {
-        path: __dirname,
-        publicPath: '/',
-        filename: 'bundle.js'
+        filename: './chrome/src/browser_action/bundle.js'
     },
+    devtool: 'source-map',
     module: {
         loaders: [
             {
-                test: /\.js?$/,
+                test: /\.jsx?$/,
                 loaders: ['babel'],
-                include: path.join(__dirname, 'src')
+                exclude: /(node_modules|bower_components)/
             },
             {
                 test: /\.scss?$/,
