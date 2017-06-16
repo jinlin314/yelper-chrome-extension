@@ -21,7 +21,7 @@ const getByPrice = (restaurants) => ({ type: GET_RESTAURANTS_BY_PRICE, restauran
 const getByReviews = (restaurants) => ({ type: GET_RESTAURANTS_BY_REVIEWS, restaurants });
 const select = (restaurant) => ({ type: SELECT_RESTAURANT, restaurant });
 const add = (restaurant) => ({ type: ADD_FAVORITE, restaurants });
-const locate = (loaction) => ({ type: GET_LOCATION, loaction});
+const locate = (location) => ({ type: GET_LOCATION, location});
 
 /* ------------------    REDUCER    --------------------- */
 
@@ -48,7 +48,8 @@ export default function reducer(state = {restaurants: [], restaurant: null, loca
             newState.restaurant = action.restaurant;
             break;
         case GET_LOCATION:
-            newState.loaction = action.location;
+            newState.location = action.location;
+            break;
         default:
             return state
     }
@@ -67,7 +68,7 @@ export default function reducer(state = {restaurants: [], restaurant: null, loca
 //     };
 // };
 
-export const geoFindMe = () => {
+export const geoFindMe = () => dispatch => {
     console.log("in the dispatcher")
 
     const success = (position) => {

@@ -16,8 +16,7 @@ export class Navigation extends Component {
         super(props);
         this.state = {
             selectedFilter: "all",
-            inputValue: '',
-            location: this.props.location
+            inputValue: ''
         }
 
         // this.geoFindMe = this.geoFindMe.bind(this);
@@ -54,14 +53,14 @@ export class Navigation extends Component {
 
     onSearchSubmit(event) {
         event.preventDefault();
-        console.log('in the search handler')
+        console.log('this.props', this.props)
 
-        store.dispatch(geoFindMe());
+        // store.dispatch(geoFindMe());
 
         let keywords = event.target.keywords.value;
         let filterType = this.state.selectedFilter;
-        let latitude  = this.state.location[0];
-        let longitude = this.state.location[1];
+        let latitude  = this.props.location[0];
+        let longitude = this.props.location[1];
 
         axios.get(`http://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&sensor=true`)
             .then(res => res.data.results)
@@ -75,36 +74,58 @@ export class Navigation extends Component {
 
 
     render() {
-        return  (
+        console.log('hello');
+        return (
             <div>
-            <Navbar>
-                <Navbar.Header>
-                    <Navbar.Brand>
-                        <a href="#">Yelper Eater</a>
-                    </Navbar.Brand>
-                    <Navbar.Toggle />
-                </Navbar.Header>
-                <Navbar.Collapse>
-                    <form onSubmit={this.onSearchSubmit}>
-                        <Navbar.Form pullLeft>
-                            <a href="#" className="dropdown-toggle" data-toggle="dropdown">{this.state.selectedFilter}<b className="caret"></b></a>
-                            <ul className="dropdown-menu">
-                                <li><a onClick={()=>this.setFilter("keywords")}>keywords</a></li>
-                                <li className="divider"></li>
-                                <li><a onClick={()=>this.setFilter("business")}>Cuisine</a></li>
-                                <li><a onClick={()=>this.setFilter("delivery")}>Delivery</a></li>
-                            </ul>
-                            {' '}
-                            <FormGroup>
-                                <FormControl name="keywords" type="text" placeholder="Search" />
-                            </FormGroup>
-                            {' '}
-                            <Button type="submit" onClick={this.geoFindMe}>Search</Button>
-                        </Navbar.Form>
-                    </form>
-                </Navbar.Collapse>
-            </Navbar>
-                <div id="testGeo"></div>
+                {
+                    (this.props.location)
+                    ? (
+                        <div>
+                        <Navbar>
+                            <Navbar.Header>
+                                <Navbar.Brand>
+                                    <a href="#">Yelper Eater</a>
+                                </Navbar.Brand>
+                                <Navbar.Toggle />
+                            </Navbar.Header>
+                            <Navbar.Collapse>
+                                <form onSubmit={this.onSearchSubmit}>
+                                    <Navbar.Form pullLeft>
+                                        <a href="#" className="dropdown-toggle" data-toggle="dropdown">{this.state.selectedFilter}<b className="caret"></b></a>
+                                        <ul className="dropdown-menu">
+                                            <li><a onClick={()=>this.setFilter("keywords")}>keywords</a></li>
+                                            <li className="divider"></li>
+                                            <li><a onClick={()=>this.setFilter("business")}>Cuisine</a></li>
+                                            <li><a onClick={()=>this.setFilter("delivery")}>Delivery</a></li>
+                                        </ul>
+                                        {' '}
+                                        <FormGroup>
+                                            <FormControl name="keywords" type="text" placeholder="Search" />
+                                        </FormGroup>
+                                        {' '}
+                                        <Button type="submit" onClick={this.geoFindMe}>Search</Button>
+                                    </Navbar.Form>
+                                </form>
+                            </Navbar.Collapse>
+                        </Navbar>
+                        </div>
+                    )
+                    :(
+                        <div>
+                            <Navbar>
+                                <Navbar.Header>
+                                    <Navbar.Brand>
+                                        <a href="#">Yelper Eater</a>
+                                    </Navbar.Brand>
+                                    <Navbar.Toggle />
+                                </Navbar.Header>
+                            </Navbar>
+                            <Well>
+                                Locating current Location...
+                            </Well>
+                        </div>
+                    )
+                }
             </div>
         )
     }
@@ -112,11 +133,11 @@ export class Navigation extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        results: state.restautantResults.location
+        location: state.result.location
     }
 }
 
 export default connect(
     mapStateToProps,
     {},
-)(Navbar)
+)(Navigation)

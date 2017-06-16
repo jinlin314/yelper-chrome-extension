@@ -19,4 +19,4 @@ const store = createStore(
 export default store;
 
 // get the location at start
-
+store.dispatch(geoFindMe());

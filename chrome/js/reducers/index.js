@@ -5,7 +5,7 @@
 import { combineReducers } from 'redux'
 
 const rootReducer = combineReducers({
-    restautantResults: require('./restaurant').default,
+    result: require('./restaurant').default,
 
 })
 
