@@ -3,7 +3,7 @@
  */
 
 import React, {Component} from 'react';
-import {Well, Table, Grid, Col, Row, Image, Panel, Button} from 'react-bootstrap';
+import {Well, Table, OverlayTrigger, Tooltip, Popover, Image, Panel, Button} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import store from '../store';
 
@@ -11,10 +11,14 @@ export class Result extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selected: {}
+            selected: {},
+            noteOnChromeStorage: '',
+            newNote: ''
         };
 
         this.addFavorite = this.addFavorite.bind(this);
+        this.getNote = this.getNote.bind(this);
+        this.takeNote = this.takeNote.bind(this);
     }
 
     // use the restaurants' phone numbers as the keys, since they are unique
@@ -41,11 +45,38 @@ export class Result extends Component {
 
             }
         });
+    };
+
+    // get note saved on chrome.storage.sync for a restaurant
+    getNote(phone) {
+        this.setState({selected: phone});
+
+        chrome.storage.sync.get(function(notes) {
+            if (notes.hasOwnProperty(phone)){
+                this.setState({noteOnChromeStorage: notes})
+            }
+        });
     }
+
+    takeNote(event) {
+        event.preventDefault();
+        this.setState({newNote: event.target.value});
+        console.log(this.state.newNote);
+    }
+
 
 
     render() {
         const restaurants = this.props.restaurants;
+        const tooltip = <Tooltip id="add">Add to Favorite</Tooltip>;
+        const popoverLeft = (
+            <Popover id="popover-positioned-left" title="Tips">
+                <form>
+                    <textarea id="note" onChange={this.takeNote} defaultValue={this.state.noteOnChromeStorage}></textarea>
+                    <p><Button className="btn btn-info" pullRight>Save</Button></p>
+                </form>
+            </Popover>
+        );
         return  (
             <div>
                 <section>
@@ -71,8 +102,17 @@ export class Result extends Component {
                                                 </Panel>
                                             </td>
                                             <td className="addFav">
-                                                <p><Button onClick={() => this.addFavorite(parseInt(restaurant.phone.slice(1)))}><span className="glyphicon glyphicon-star-empty"></span></Button></p>
-                                                <p><Button><span className="glyphicon glyphicon-edit"></span></Button></p>
+                                                <p>
+                                                    <OverlayTrigger placement="left" overlay={tooltip}>
+                                                        <Button onClick={() => this.addFavorite(parseInt(restaurant.phone.slice(1)))}><span className="glyphicon glyphicon-plus"></span>
+                                                        </Button>
+                                                    </OverlayTrigger>
+                                                </p>
+                                                <p>
+                                                    <OverlayTrigger trigger="click" placement="left" overlay={popoverLeft}>
+                                                        <Button onClick={() => this.getNote(parseInt(restaurant.phone.slice(1)))}><span className="glyphicon glyphicon-edit"></span></Button>
+                                                    </OverlayTrigger>
+                                                </p>
                                             </td>
                                         </tr>
                                         </tbody>

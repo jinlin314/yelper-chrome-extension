@@ -36194,7 +36194,7 @@
 	                                    _react2.default.createElement(
 	                                        _reactBootstrap.Button,
 	                                        null,
-	                                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-time' })
+	                                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-star-empty' })
 	                                    )
 	                                )
 	                            )
@@ -36214,7 +36214,7 @@
 	                                null,
 	                                _react2.default.createElement(
 	                                    'a',
-	                                    { href: '#' },
+	                                    null,
 	                                    'YelpEater'
 	                                )
 	                            ),
@@ -36222,9 +36222,10 @@
 	                        )
 	                    ),
 	                    _react2.default.createElement(
-	                        _reactBootstrap.Well,
+	                        _reactBootstrap.Panel,
 	                        null,
-	                        'Locating current Location...'
+	                        'Decting current loction...',
+	                        _react2.default.createElement(_reactBootstrap.Image, { id: 'loading', src: '../../src/browser_action/img/loadinfo.gif' })
 	                    )
 	                )
 	            );
@@ -57395,10 +57396,14 @@
 	        var _this = _possibleConstructorReturn(this, (Result.__proto__ || Object.getPrototypeOf(Result)).call(this, props));
 	
 	        _this.state = {
-	            selected: {}
+	            selected: {},
+	            noteOnChromeStorage: '',
+	            newNote: ''
 	        };
 	
 	        _this.addFavorite = _this.addFavorite.bind(_this);
+	        _this.getNote = _this.getNote.bind(_this);
+	        _this.takeNote = _this.takeNote.bind(_this);
 	        return _this;
 	    }
 	
@@ -57431,11 +57436,55 @@
 	            });
 	        }
 	    }, {
+	        key: 'getNote',
+	
+	
+	        // get note saved on chrome.storage.sync for a restaurant
+	        value: function getNote(phone) {
+	            this.setState({ selected: phone });
+	
+	            chrome.storage.sync.get(function (notes) {
+	                if (notes.hasOwnProperty(phone)) {
+	                    this.setState({ noteOnChromeStorage: notes });
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'takeNote',
+	        value: function takeNote(event) {
+	            event.preventDefault();
+	            this.setState({ newNote: event.target.value });
+	            console.log(this.state.newNote);
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
 	
 	            var restaurants = this.props.restaurants;
+	            var tooltip = _react2.default.createElement(
+	                _reactBootstrap.Tooltip,
+	                { id: 'add' },
+	                'Add to Favorite'
+	            );
+	            var popoverLeft = _react2.default.createElement(
+	                _reactBootstrap.Popover,
+	                { id: 'popover-positioned-left', title: 'Tips' },
+	                _react2.default.createElement(
+	                    'form',
+	                    null,
+	                    _react2.default.createElement('textarea', { id: 'note', onChange: this.takeNote, defaultValue: this.state.noteOnChromeStorage }),
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        _react2.default.createElement(
+	                            _reactBootstrap.Button,
+	                            { className: 'btn btn-info', pullRight: true },
+	                            'Save'
+	                        )
+	                    )
+	                )
+	            );
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -57506,20 +57555,30 @@
 	                                                'p',
 	                                                null,
 	                                                _react2.default.createElement(
-	                                                    _reactBootstrap.Button,
-	                                                    { onClick: function onClick() {
-	                                                            return _this2.addFavorite(parseInt(restaurant.phone.slice(1)));
-	                                                        } },
-	                                                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-star-empty' })
+	                                                    _reactBootstrap.OverlayTrigger,
+	                                                    { placement: 'left', overlay: tooltip },
+	                                                    _react2.default.createElement(
+	                                                        _reactBootstrap.Button,
+	                                                        { onClick: function onClick() {
+	                                                                return _this2.addFavorite(parseInt(restaurant.phone.slice(1)));
+	                                                            } },
+	                                                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-plus' })
+	                                                    )
 	                                                )
 	                                            ),
 	                                            _react2.default.createElement(
 	                                                'p',
 	                                                null,
 	                                                _react2.default.createElement(
-	                                                    _reactBootstrap.Button,
-	                                                    null,
-	                                                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-edit' })
+	                                                    _reactBootstrap.OverlayTrigger,
+	                                                    { trigger: 'click', placement: 'left', overlay: popoverLeft },
+	                                                    _react2.default.createElement(
+	                                                        _reactBootstrap.Button,
+	                                                        { onClick: function onClick() {
+	                                                                return _this2.getNote(parseInt(restaurant.phone.slice(1)));
+	                                                            } },
+	                                                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-edit' })
+	                                                    )
 	                                                )
 	                                            )
 	                                        )

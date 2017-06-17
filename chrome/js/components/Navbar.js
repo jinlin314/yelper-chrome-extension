@@ -5,7 +5,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import store from '../store';
-import {Navbar, FormGroup, FormControl, Button, Well} from 'react-bootstrap';
+import {Navbar, FormGroup, FormControl, Button, Image, Panel} from 'react-bootstrap';
 
 import axios from 'axios';
 import {yelpSearch} from '../reducers/restaurant';
@@ -77,7 +77,7 @@ export class Navigation extends Component {
                                         </FormGroup>
                                         {' '}
                                         <Button type="submit" onClick={this.geoFindMe}>Search</Button>
-                                        <Button><span className="glyphicon glyphicon-time"></span></Button>
+                                        <Button><span className="glyphicon glyphicon-star-empty"></span></Button>
                                     </Navbar.Form>
                                 </form>
                             </Navbar.Collapse>
@@ -89,14 +89,12 @@ export class Navigation extends Component {
                             <Navbar>
                                 <Navbar.Header>
                                     <Navbar.Brand>
-                                        <a href="#">YelpEater</a>
+                                        <a>YelpEater</a>
                                     </Navbar.Brand>
                                     <Navbar.Toggle />
                                 </Navbar.Header>
                             </Navbar>
-                            <Well>
-                                Locating current Location...
-                            </Well>
+                            <Panel>Decting current loction...<Image id='loading' src="../../src/browser_action/img/loadinfo.gif" /></Panel>
                         </div>
                     )
                 }

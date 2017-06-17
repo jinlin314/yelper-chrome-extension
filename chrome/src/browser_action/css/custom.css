@@ -7,12 +7,18 @@
 body, section {			/* Change width and height to own preferences */
 	width: 500px;
 	height: 400px;
-	padding: 15px;
+	padding-left: 15px;
+	padding-right: 15px;
 	overflow-x: hidden;
+	background-color: #DFF7F7;
 }
 
 #searchBox {
 	width: 35vh;
+}
+
+#loading {
+	width: 90vh;
 }
 
 .img {
@@ -30,6 +36,12 @@ body, section {			/* Change width and height to own preferences */
 
 .addFav {
 	width: 8vh;
+}
+
+#note {
+	width: 35vh;
+	height: 45vh;
+	background-color: #DFF7F7;
 }
 
 /* Basic style tweaks */
