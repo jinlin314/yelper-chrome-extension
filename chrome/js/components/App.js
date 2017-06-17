@@ -15,7 +15,6 @@ export class App extends Component {
 
     }
     render(){
-        console.log('App props, ', this.props)
        return  (
            <div>
                <div>

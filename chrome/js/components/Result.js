@@ -19,12 +19,28 @@ export class Result extends Component {
 
     // use the restaurants' phone numbers as the keys, since they are unique
     addFavorite(phone) {
-        // Save it using the Chrome extension storage API.
-        chrome.storage.sync.set({'value': theValue}, function() {
-            // Notify that we saved.
-            message('Settings saved');
-        });
+        // chrome.storage.sync.clear()
 
+        chrome.storage.sync.get(function(results) {
+
+            if (!results.hasOwnProperty('favorites')){
+                chrome.storage.sync.set({'favorites': [phone]}, function() {
+                    // Notify that we saved.
+                    alert('Saved');
+                });
+            } else {
+                if (results.favorites.indexOf(phone) === -1){
+                    const favorites = results.favorites.concat([phone]);
+                    chrome.storage.sync.set({'favorites': favorites}, function() {
+                        // Notify that we saved.
+                        alert('Saved');
+                    });
+                } else {
+                    alert('already saved')
+                }
+
+            }
+        });
     }
 
 

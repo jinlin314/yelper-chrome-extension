@@ -8,8 +8,7 @@ import store from '../store';
 import {Navbar, FormGroup, FormControl, Button, Well} from 'react-bootstrap';
 
 import axios from 'axios';
-import {yelpSearch} from '../reducers/restaurant'
-// import {yelpSearch} from '../utils'
+import {yelpSearch} from '../reducers/restaurant';
 
 export class Navigation extends Component {
     constructor(props) {

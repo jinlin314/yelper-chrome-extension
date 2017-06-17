@@ -138,3 +138,17 @@ yelp.accessToken(clientId, clientSecret).then(response => {
 // }
 
 
+
+// Save it using the Chrome extension storage API.
+// chrome.storage.sync.set({'favarites': [phone]}, function() {
+//     // Notify that we saved.
+//     alert('Settings saved');
+// });
+// chrome.storage.sync.get(['favorites'], function(results) {
+//     console.log('in storage: ', results);
+// });
+// chrome.storage.sync.remove(['value'], function(results) {
+//     // Notify that we saved.
+//     alert('removed');
+// });
+
