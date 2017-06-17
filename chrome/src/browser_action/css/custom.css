@@ -10,14 +10,17 @@ body, section {			/* Change width and height to own preferences */
 	padding-left: 15px;
 	padding-right: 15px;
 	overflow-x: hidden;
-	background-color: #DFF7F7;
+}
+
+.logo {
+	width: 10vh;
 }
 
 #searchBox {
 	width: 35vh;
 }
 
-#loading {
+#loading, #home {
 	width: 90vh;
 }
 

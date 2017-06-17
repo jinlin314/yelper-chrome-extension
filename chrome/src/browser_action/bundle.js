@@ -26259,6 +26259,8 @@
 	
 	var _restaurant = __webpack_require__(244);
 	
+	var _favorites = __webpack_require__(311);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var store = (0, _redux.createStore)(_reducers2.default, (0, _reduxDevtoolsExtension.composeWithDevTools)((0, _redux.applyMiddleware)(_reduxThunk2.default, (0, _reduxLogger.createLogger)({ collapsed: true }))));
@@ -26268,6 +26270,7 @@
 	// get the location at start
 	
 	store.dispatch((0, _restaurant.geoFindMe)());
+	store.dispatch((0, _favorites.getAllFavorites)());
 
 /***/ }),
 /* 242 */
@@ -26445,7 +26448,6 @@
 	                    location: location
 	                }).then(function (response) {
 	                    var restaurants = response.jsonBody.businesses;
-	                    console.log(restaurants);
 	                    dispatch(getByDelivery(restaurants));
 	                }).catch(function (e) {
 	                    console.log(e);
@@ -26453,7 +26455,6 @@
 	            } else if (filterType === 'reviews') {
 	                client.reviews(keywords).then(function (response) {
 	                    var reviews = response.jsonBody.reviews;
-	                    console.log(reviews);
 	                    dispatch(getReviews(reviews));
 	                }).catch(function (e) {
 	                    console.log(e);
@@ -26465,19 +26466,17 @@
 	                };
 	                client.search(searchRequest).then(function (response) {
 	                    var restaurants = response.jsonBody.businesses;
-	                    console.log(restaurants);
 	                    dispatch(getByKeywords(restaurants));
 	                });
 	            } else {
-	                // search by keywords restaurants nearby
+	                // search nearby restaurants nearby
 	                var _searchRequest = {
 	                    term: "restaurant",
 	                    location: location
 	                };
 	                client.search(_searchRequest).then(function (response) {
 	                    var restaurants = response.jsonBody.businesses;
-	                    console.log(restaurants);
-	                    dispatch(getByKeywords(restaurants));
+	                    dispatch(getNearBy(restaurants));
 	                });
 	            }
 	        }).catch(function (e) {
@@ -35836,27 +35835,32 @@
 	var GET_ALL_FAVORITES = 'GET_ALL_FAVORITES';
 	var ADD_FAVORITE = 'ADD_FAVORITE';
 	var REMOVE_FAVORITE = 'REMOVE_FAVORITE';
-	var CLOSE_FAVORITES = 'CLOSE_FAVORITES';
+	var GET_ALL_NOTES = 'GET_ALL_NOTES';
+	var SAVE_NOTE = 'SAVE_NOTE';
 	
 	// /* --------------    ACTION CREATORS    ----------------- */
 	
 	var getAll = function getAll(favorites) {
 	    return { type: GET_ALL_FAVORITES, favorites: favorites };
 	};
-	var add = function add(target) {
+	var add = function add(favorites) {
 	    return { type: ADD_FAVORITE, favorites: favorites };
 	};
-	var remove = function remove(target) {
+	var remove = function remove(favorites) {
 	    return { type: REMOVE_FAVORITE, favorites: favorites };
 	};
-	var closeFavorite = function closeFavorite() {
-	    return { type: CLOSE_FAVORITES };
+	var getNotes = function getNotes(notes) {
+	    return { type: GET_ALL_NOTES, notes: notes };
+	};
+	var save = function save(note) {
+	    return { type: SAVE_NOTE };
 	};
 	
 	/* ------------------    REDUCER    --------------------- */
 	var initial_state = {
 	    favorites: [],
-	    favorite: {},
+	    notes: [],
+	    note: '',
 	    showBool: false
 	};
 	
@@ -35872,13 +35876,16 @@
 	            newState.showBool = true;
 	            break;
 	        case ADD_FAVORITE:
-	            newState.favorite = action.favorite;
+	            newState.favorites = action.favorites;
 	            break;
 	        case REMOVE_FAVORITE:
 	            newState.favorites = action.favorites;
 	            break;
-	        case CLOSE_FAVORITES:
-	            newState.showBool = false;
+	        case GET_ALL_NOTES:
+	            newState.notes = action.notes;
+	            break;
+	        case SAVE_NOTE:
+	            newState.notes = action.notes;
 	            break;
 	        default:
 	            return state;
@@ -35888,15 +35895,49 @@
 	
 	// /* ------------       DISPATCHERS     ------------------ */
 	
-	// export const getAllFavorites = () => dispatch => {
-	//     // favorites = get from the chrome.storage
-	//     // dispatch(getALL(favorites)
-	// }
-	//
-	// export const addFavorite = (target) => dispatch => {
-	//     // favorites = get from the chrome.storage
-	//     // dispatch(add(target)
-	// }
+	var getAllFavorites = exports.getAllFavorites = function getAllFavorites() {
+	    return function (dispatch) {
+	        chrome.storage.sync.get(function (results) {
+	            if (results.hasOwnProperty('favorites')) {
+	                dispatch(getAll(results.favorites));
+	            } else {
+	                dispatch(getAll([]));
+	            }
+	        });
+	    };
+	};
+	
+	var addFavorite = exports.addFavorite = function addFavorite(phone) {
+	    return function (dispatch) {
+	        chrome.storage.sync.get(function (results) {
+	
+	            if (!results.hasOwnProperty('favorites')) {
+	                chrome.storage.sync.set({ 'favorites': [phone] }, function () {
+	                    dispatch(getNotes([phone]));
+	                });
+	            } else {
+	                if (results.favorites.indexOf(phone) === -1) {
+	                    var favorites = results.favorites.concat([phone]);
+	                    chrome.storage.sync.set({ 'favorites': favorites }, function () {
+	                        dispatch(add(favorites));
+	                    });
+	                }
+	            }
+	        });
+	    };
+	};
+	
+	var getAllNotes = exports.getAllNotes = function getAllNotes() {
+	    return function (dispatch) {
+	        chrome.storage.sync.get(function (results) {
+	            if (results.hasOwnProperty('notes')) {
+	                dispatch(getAll(results.favorites));
+	            } else {
+	                dispatch(getAllFavorites([]));
+	            }
+	        });
+	    };
+	};
 
 /***/ }),
 /* 312 */
@@ -35968,8 +36009,6 @@
 	var _Result = __webpack_require__(595);
 	
 	var _Result2 = _interopRequireDefault(_Result);
-	
-	var _restaurant = __webpack_require__(244);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -36106,7 +36145,6 @@
 	                return res.data.results;
 	            }).then(function (results) {
 	                var address = results[3].formatted_address;
-	                // yelpSearch(keywords, filterType, address);
 	                _store2.default.dispatch((0, _restaurant.yelpSearch)(keywords, filterType, address));
 	            }).catch(console.error);
 	        }
@@ -36130,10 +36168,11 @@
 	                            _react2.default.createElement(
 	                                _reactBootstrap.Navbar.Brand,
 	                                null,
+	                                _react2.default.createElement(_reactBootstrap.Image, { className: 'logo', src: '../../src/browser_action/img/logo1.png' }),
 	                                _react2.default.createElement(
 	                                    'a',
-	                                    { href: '#' },
-	                                    'YelpEater'
+	                                    null,
+	                                    'YelpMe'
 	                                )
 	                            ),
 	                            _react2.default.createElement(_reactBootstrap.Navbar.Toggle, null)
@@ -36212,10 +36251,11 @@
 	                            _react2.default.createElement(
 	                                _reactBootstrap.Navbar.Brand,
 	                                null,
+	                                _react2.default.createElement(_reactBootstrap.Image, { className: 'logo', src: '../../src/browser_action/img/logo1.png' }),
 	                                _react2.default.createElement(
 	                                    'a',
 	                                    null,
-	                                    'YelpEater'
+	                                    'YelpMe'
 	                                )
 	                            ),
 	                            _react2.default.createElement(_reactBootstrap.Navbar.Toggle, null)
@@ -57305,6 +57345,12 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
+	var _axios = __webpack_require__(568);
+	
+	var _axios2 = _interopRequireDefault(_axios);
+	
+	var _restaurant = __webpack_require__(244);
+	
 	var _reactBootstrap = __webpack_require__(316);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -57332,11 +57378,11 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(
-	                    'h1',
+	                this.props.location ? _react2.default.createElement(
+	                    _reactBootstrap.Panel,
 	                    null,
-	                    'home'
-	                )
+	                    _react2.default.createElement(_reactBootstrap.Image, { id: 'home', src: '../../src/browser_action/img/home.png' })
+	                ) : _react2.default.createElement('div', null)
 	            );
 	        }
 	    }]);
@@ -57346,7 +57392,7 @@
 	
 	var mapStateToProps = function mapStateToProps(state) {
 	    return {
-	        restaurants: state.result.restaurants
+	        location: state.result.location
 	    };
 	};
 	
@@ -57376,6 +57422,8 @@
 	var _store = __webpack_require__(241);
 	
 	var _store2 = _interopRequireDefault(_store);
+	
+	var _favorites = __webpack_require__(311);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -57407,39 +57455,46 @@
 	        return _this;
 	    }
 	
-	    // use the restaurants' phone numbers as the keys, since they are unique
-	
-	
 	    _createClass(Result, [{
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(newProps, oldProps) {
+	            this.setState({
+	                favorites: newProps.favorites
+	            });
+	        }
+	
+	        // use the restaurants' phone numbers as the keys, since they are unique
+	
+	    }, {
 	        key: 'addFavorite',
 	        value: function addFavorite(phone) {
+	
+	            _store2.default.dispatch((0, _favorites.addFavorite)(phone));
+	
 	            // chrome.storage.sync.clear()
 	
-	            chrome.storage.sync.get(function (results) {
-	
-	                if (!results.hasOwnProperty('favorites')) {
-	                    chrome.storage.sync.set({ 'favorites': [phone] }, function () {
-	                        // Notify that we saved.
-	                        alert('Saved');
-	                    });
-	                } else {
-	                    if (results.favorites.indexOf(phone) === -1) {
-	                        var favorites = results.favorites.concat([phone]);
-	                        chrome.storage.sync.set({ 'favorites': favorites }, function () {
-	                            // Notify that we saved.
-	                            alert('Saved');
-	                        });
-	                    } else {
-	                        alert('already saved');
-	                    }
-	                }
-	            });
+	            // chrome.storage.sync.get(function(results) {
+	            //
+	            //     if (!results.hasOwnProperty('favorites')){
+	            //         chrome.storage.sync.set({'favorites': [phone]}, function() {
+	            //             // do sth after set, maybe alert
+	            //         });
+	            //     } else {
+	            //         if (results.favorites.indexOf(phone) === -1){
+	            //             const favorites = results.favorites.concat([phone]);
+	            //             chrome.storage.sync.set({'favorites': favorites}, function() {
+	            //                 //maybe alert user 'added'
+	            //             });
+	            //         }
+	            //     }
+	            // });
 	        }
 	    }, {
 	        key: 'getNote',
 	
 	
-	        // get note saved on chrome.storage.sync for a restaurant
+	        // once the "note" is clicked, saved the target restaurant in state,
+	        // get the note saved on chrome.storage.sync for that restaurant, set it to state also
 	        value: function getNote(phone) {
 	            this.setState({ selected: phone });
 	
@@ -57454,13 +57509,18 @@
 	        value: function takeNote(event) {
 	            event.preventDefault();
 	            this.setState({ newNote: event.target.value });
-	            console.log(this.state.newNote);
+	        }
+	    }, {
+	        key: 'saveNote',
+	        value: function saveNote(event) {
+	            event.preventDefault();
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
 	
+	            var favorites = this.props.favorites;
 	            var restaurants = this.props.restaurants;
 	            var tooltip = _react2.default.createElement(
 	                _reactBootstrap.Tooltip,
@@ -57476,10 +57536,15 @@
 	                    _react2.default.createElement('textarea', { id: 'note', onChange: this.takeNote, defaultValue: this.state.noteOnChromeStorage }),
 	                    _react2.default.createElement(
 	                        'p',
-	                        null,
+	                        { id: 'pop-over-buttons' },
 	                        _react2.default.createElement(
 	                            _reactBootstrap.Button,
-	                            { className: 'btn btn-info', pullRight: true },
+	                            { className: 'btn btn-danger' },
+	                            'Close'
+	                        ),
+	                        _react2.default.createElement(
+	                            _reactBootstrap.Button,
+	                            { className: 'btn btn-info' },
 	                            'Save'
 	                        )
 	                    )
@@ -57491,7 +57556,7 @@
 	                _react2.default.createElement(
 	                    'section',
 	                    null,
-	                    restaurants.map(function (restaurant, i) {
+	                    favorites && restaurants.map(function (restaurant, i) {
 	                        return _react2.default.createElement(
 	                            'div',
 	                            { key: i },
@@ -57551,6 +57616,9 @@
 	                                        _react2.default.createElement(
 	                                            'td',
 	                                            { className: 'addFav' },
+	
+	                                            // if the restaurant is already in favorites, show the "note" button for memo
+	                                            favorites.indexOf(parseInt(restaurant.phone)) === -1 ? // restaurant not in favorites
 	                                            _react2.default.createElement(
 	                                                'p',
 	                                                null,
@@ -57565,13 +57633,14 @@
 	                                                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-plus' })
 	                                                    )
 	                                                )
-	                                            ),
+	                                            ) :
+	                                            // if the restaurant is not in the restaurant, show the "add" button
 	                                            _react2.default.createElement(
 	                                                'p',
 	                                                null,
 	                                                _react2.default.createElement(
 	                                                    _reactBootstrap.OverlayTrigger,
-	                                                    { trigger: 'click', placement: 'left', overlay: popoverLeft },
+	                                                    { trigger: 'focus', placement: 'left', overlay: popoverLeft },
 	                                                    _react2.default.createElement(
 	                                                        _reactBootstrap.Button,
 	                                                        { onClick: function onClick() {
@@ -57597,7 +57666,8 @@
 	
 	var mapStateToProps = function mapStateToProps(state) {
 	    return {
-	        restaurants: state.result.restaurants
+	        restaurants: state.result.restaurants,
+	        favorites: state.favorites.favorites
 	    };
 	};
 	

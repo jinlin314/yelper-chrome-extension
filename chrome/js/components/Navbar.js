@@ -41,7 +41,6 @@ export class Navigation extends Component {
             .then(res => res.data.results)
             .then(results => {
                 const address = results[3].formatted_address;
-                // yelpSearch(keywords, filterType, address);
                 store.dispatch(yelpSearch(keywords, filterType, address));
             })
             .catch(console.error)
@@ -59,7 +58,8 @@ export class Navigation extends Component {
                         <Navbar>
                             <Navbar.Header>
                                 <Navbar.Brand>
-                                    <a href="#">YelpEater</a>
+                                    <Image className="logo" src="../../src/browser_action/img/logo1.png"></Image>
+                                    <a>YelpMe</a>
                                 </Navbar.Brand>
                                 <Navbar.Toggle />
                             </Navbar.Header>
@@ -89,7 +89,8 @@ export class Navigation extends Component {
                             <Navbar>
                                 <Navbar.Header>
                                     <Navbar.Brand>
-                                        <a>YelpEater</a>
+                                        <Image className="logo" src="../../src/browser_action/img/logo1.png"></Image>
+                                        <a>YelpMe</a>
                                     </Navbar.Brand>
                                     <Navbar.Toggle />
                                 </Navbar.Header>

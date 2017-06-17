@@ -6,8 +6,6 @@ import Navbar from './Navbar';
 import Home from './Home';
 import Result from './Result';
 
-import {yelpSearch} from '../reducers/restaurant';
-
 
 export class App extends Component {
     constructor(props) {

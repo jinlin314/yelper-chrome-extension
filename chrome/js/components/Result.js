@@ -6,6 +6,7 @@ import React, {Component} from 'react';
 import {Well, Table, OverlayTrigger, Tooltip, Popover, Image, Panel, Button} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import store from '../store';
+import {addFavorite} from '../reducers/favorites';
 
 export class Result extends Component {
     constructor(props) {
@@ -21,33 +22,38 @@ export class Result extends Component {
         this.takeNote = this.takeNote.bind(this);
     }
 
+    componentWillReceiveProps(newProps, oldProps) {
+        this.setState({
+            favorites: newProps.favorites
+        })
+    }
+
     // use the restaurants' phone numbers as the keys, since they are unique
     addFavorite(phone) {
+
+        store.dispatch(addFavorite(phone));
+
         // chrome.storage.sync.clear()
 
-        chrome.storage.sync.get(function(results) {
-
-            if (!results.hasOwnProperty('favorites')){
-                chrome.storage.sync.set({'favorites': [phone]}, function() {
-                    // Notify that we saved.
-                    alert('Saved');
-                });
-            } else {
-                if (results.favorites.indexOf(phone) === -1){
-                    const favorites = results.favorites.concat([phone]);
-                    chrome.storage.sync.set({'favorites': favorites}, function() {
-                        // Notify that we saved.
-                        alert('Saved');
-                    });
-                } else {
-                    alert('already saved')
-                }
-
-            }
-        });
+        // chrome.storage.sync.get(function(results) {
+        //
+        //     if (!results.hasOwnProperty('favorites')){
+        //         chrome.storage.sync.set({'favorites': [phone]}, function() {
+        //             // do sth after set, maybe alert
+        //         });
+        //     } else {
+        //         if (results.favorites.indexOf(phone) === -1){
+        //             const favorites = results.favorites.concat([phone]);
+        //             chrome.storage.sync.set({'favorites': favorites}, function() {
+        //                 //maybe alert user 'added'
+        //             });
+        //         }
+        //     }
+        // });
     };
 
-    // get note saved on chrome.storage.sync for a restaurant
+    // once the "note" is clicked, saved the target restaurant in state,
+    // get the note saved on chrome.storage.sync for that restaurant, set it to state also
     getNote(phone) {
         this.setState({selected: phone});
 
@@ -61,19 +67,24 @@ export class Result extends Component {
     takeNote(event) {
         event.preventDefault();
         this.setState({newNote: event.target.value});
-        console.log(this.state.newNote);
+    }
+
+    saveNote(event) {
+        event.preventDefault();
+
     }
 
 
 
     render() {
+        const favorites = this.props.favorites;
         const restaurants = this.props.restaurants;
         const tooltip = <Tooltip id="add">Add to Favorite</Tooltip>;
         const popoverLeft = (
             <Popover id="popover-positioned-left" title="Tips">
                 <form>
                     <textarea id="note" onChange={this.takeNote} defaultValue={this.state.noteOnChromeStorage}></textarea>
-                    <p><Button className="btn btn-info" pullRight>Save</Button></p>
+                    <p id="pop-over-buttons"><Button className="btn btn-danger">Close</Button><Button className="btn btn-info">Save</Button></p>
                 </form>
             </Popover>
         );
@@ -81,7 +92,7 @@ export class Result extends Component {
             <div>
                 <section>
                     {
-                        restaurants.map((restaurant,i) => {
+                        favorites && restaurants.map((restaurant,i) => {
                             return (
                                 <div key={i}>
                                     <Table>
@@ -102,17 +113,28 @@ export class Result extends Component {
                                                 </Panel>
                                             </td>
                                             <td className="addFav">
-                                                <p>
-                                                    <OverlayTrigger placement="left" overlay={tooltip}>
-                                                        <Button onClick={() => this.addFavorite(parseInt(restaurant.phone.slice(1)))}><span className="glyphicon glyphicon-plus"></span>
-                                                        </Button>
-                                                    </OverlayTrigger>
-                                                </p>
-                                                <p>
-                                                    <OverlayTrigger trigger="click" placement="left" overlay={popoverLeft}>
-                                                        <Button onClick={() => this.getNote(parseInt(restaurant.phone.slice(1)))}><span className="glyphicon glyphicon-edit"></span></Button>
-                                                    </OverlayTrigger>
-                                                </p>
+                                                {
+                                                    // if the restaurant is already in favorites, show the "note" button for memo
+                                                    (favorites.indexOf(parseInt(restaurant.phone)) === -1) // restaurant not in favorites
+                                                    ? (
+                                                        <p>
+                                                            <OverlayTrigger placement="left" overlay={tooltip}>
+                                                                <Button onClick={() => this.addFavorite(parseInt(restaurant.phone.slice(1)))}><span className="glyphicon glyphicon-plus"></span>
+                                                                </Button>
+                                                            </OverlayTrigger>
+                                                        </p>
+                                                    )
+                                                        // if the restaurant is not in the restaurant, show the "add" button
+                                                    : (
+                                                        <p>
+                                                            <OverlayTrigger trigger="focus" placement="left" overlay={popoverLeft}>
+                                                                <Button onClick={() => this.getNote(parseInt(restaurant.phone.slice(1)))}><span className="glyphicon glyphicon-edit"></span></Button>
+                                                            </OverlayTrigger>
+                                                        </p>
+                                                    )
+                                                }
+
+
                                             </td>
                                         </tr>
                                         </tbody>
@@ -129,7 +151,8 @@ export class Result extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        restaurants: state.result.restaurants
+        restaurants: state.result.restaurants,
+        favorites: state.favorites.favorites
     }
 };
 
@@ -137,4 +160,3 @@ export default connect(
     mapStateToProps,
     {},
 )(Result)
-

@@ -93,7 +93,6 @@ export const yelpSearch = (keywords, filterType, location) => dispatch => {
                 location: location
             }).then(response => {
                 const restaurants = response.jsonBody.businesses
-                console.log(restaurants);
                 dispatch(getByDelivery(restaurants))
             }).catch(e => {
                 console.log(e);
@@ -101,7 +100,6 @@ export const yelpSearch = (keywords, filterType, location) => dispatch => {
         } else if (filterType === 'reviews') {
             client.reviews(keywords).then(response => {
                 const reviews = response.jsonBody.reviews;
-                console.log(reviews);
                 dispatch(getReviews(reviews));
             }).catch(e => {
                 console.log(e);
@@ -113,18 +111,16 @@ export const yelpSearch = (keywords, filterType, location) => dispatch => {
             };
             client.search(searchRequest).then(response => {
                 const restaurants = response.jsonBody.businesses;
-                console.log(restaurants);
                 dispatch(getByKeywords(restaurants))
             })
-        }else { // search by keywords restaurants nearby
+        }else { // search nearby restaurants nearby
             const searchRequest = {
                 term: "restaurant",
                 location: location
             };
             client.search(searchRequest).then(response => {
                 const restaurants = response.jsonBody.businesses;
-                console.log(restaurants);
-                dispatch(getByKeywords(restaurants))
+                dispatch(getNearBy(restaurants))
             })
         }
     }).catch(e => {
