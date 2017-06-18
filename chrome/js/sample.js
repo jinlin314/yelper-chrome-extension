@@ -152,3 +152,20 @@ yelp.accessToken(clientId, clientSecret).then(response => {
 //     alert('removed');
 // });
 
+
+// const popoverLeft = (
+//     <Popover id="popover-positioned-left" title="Tips">
+//         <form>
+//             <textarea id="note" onChange={this.takeNote} defaultValue={this.state.noteOnChromeStorage}></textarea>
+//             <p id="pop-over-buttons">
+//                 <Button className="btn btn-danger">Close</Button>
+//                 <Button onClick={this.saveNote} className="btn btn-info">Save</Button>
+//             </p>
+//         </form>
+//     </Popover>
+// );
+//
+//
+// <OverlayTrigger trigger={this.state.noteShow} placement="left" overlay={popoverLeft}>
+//     <Button onClick={() => this.getNote(parseInt(restaurant.phone.slice(1)))}><span className="glyphicon glyphicon-edit"></span></Button>
+// </OverlayTrigger>

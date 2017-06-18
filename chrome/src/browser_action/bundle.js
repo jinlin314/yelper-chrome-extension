@@ -26259,7 +26259,7 @@
 	
 	var _restaurant = __webpack_require__(244);
 	
-	var _favorites = __webpack_require__(311);
+	var _favorites = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./reducers/favorites\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -26312,7 +26312,7 @@
 	
 	var rootReducer = (0, _redux.combineReducers)({
 	  result: __webpack_require__(244).default,
-	  favorites: __webpack_require__(311).default
+	  favorites: __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./favorites\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())).default
 	}); /**
 	     * Created by jinlin on 6/15/17.
 	     */
@@ -35817,129 +35817,7 @@
 	var clientSecret = exports.clientSecret = 'freTjoBNaRNsg2KCBvm83QBVN31kvkkPmvlI15HFRFczsM5RRJpmOErQTlB7f3pl';
 
 /***/ }),
-/* 311 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = reducer;
-	// /**
-	//  * Created by jinlin on 6/15/17.
-	//  */
-	
-	// /* ------------------    ACTIONS    --------------------- */
-	
-	var GET_ALL_FAVORITES = 'GET_ALL_FAVORITES';
-	var ADD_FAVORITE = 'ADD_FAVORITE';
-	var REMOVE_FAVORITE = 'REMOVE_FAVORITE';
-	var GET_ALL_NOTES = 'GET_ALL_NOTES';
-	var SAVE_NOTE = 'SAVE_NOTE';
-	
-	// /* --------------    ACTION CREATORS    ----------------- */
-	
-	var getAll = function getAll(favorites) {
-	    return { type: GET_ALL_FAVORITES, favorites: favorites };
-	};
-	var add = function add(favorites) {
-	    return { type: ADD_FAVORITE, favorites: favorites };
-	};
-	var remove = function remove(favorites) {
-	    return { type: REMOVE_FAVORITE, favorites: favorites };
-	};
-	var getNotes = function getNotes(notes) {
-	    return { type: GET_ALL_NOTES, notes: notes };
-	};
-	var save = function save(note) {
-	    return { type: SAVE_NOTE };
-	};
-	
-	/* ------------------    REDUCER    --------------------- */
-	var initial_state = {
-	    favorites: [],
-	    notes: [],
-	    note: '',
-	    showBool: false
-	};
-	
-	function reducer() {
-	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initial_state;
-	    var action = arguments[1];
-	
-	    var newState = Object.assign({}, state);
-	
-	    switch (action.type) {
-	        case GET_ALL_FAVORITES:
-	            newState.favorites = action.favorites;
-	            newState.showBool = true;
-	            break;
-	        case ADD_FAVORITE:
-	            newState.favorites = action.favorites;
-	            break;
-	        case REMOVE_FAVORITE:
-	            newState.favorites = action.favorites;
-	            break;
-	        case GET_ALL_NOTES:
-	            newState.notes = action.notes;
-	            break;
-	        case SAVE_NOTE:
-	            newState.notes = action.notes;
-	            break;
-	        default:
-	            return state;
-	    }
-	    return newState;
-	}
-	
-	// /* ------------       DISPATCHERS     ------------------ */
-	
-	var getAllFavorites = exports.getAllFavorites = function getAllFavorites() {
-	    return function (dispatch) {
-	        chrome.storage.sync.get(function (results) {
-	            if (results.hasOwnProperty('favorites')) {
-	                dispatch(getAll(results.favorites));
-	            } else {
-	                dispatch(getAll([]));
-	            }
-	        });
-	    };
-	};
-	
-	var addFavorite = exports.addFavorite = function addFavorite(phone) {
-	    return function (dispatch) {
-	        chrome.storage.sync.get(function (results) {
-	
-	            if (!results.hasOwnProperty('favorites')) {
-	                chrome.storage.sync.set({ 'favorites': [phone] }, function () {
-	                    dispatch(getNotes([phone]));
-	                });
-	            } else {
-	                if (results.favorites.indexOf(phone) === -1) {
-	                    var favorites = results.favorites.concat([phone]);
-	                    chrome.storage.sync.set({ 'favorites': favorites }, function () {
-	                        dispatch(add(favorites));
-	                    });
-	                }
-	            }
-	        });
-	    };
-	};
-	
-	var getAllNotes = exports.getAllNotes = function getAllNotes() {
-	    return function (dispatch) {
-	        chrome.storage.sync.get(function (results) {
-	            if (results.hasOwnProperty('notes')) {
-	                dispatch(getAll(results.favorites));
-	            } else {
-	                dispatch(getAllFavorites([]));
-	            }
-	        });
-	    };
-	};
-
-/***/ }),
+/* 311 */,
 /* 312 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -57423,7 +57301,7 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _favorites = __webpack_require__(311);
+	var _favorites = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../reducers/favorites\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -57446,7 +57324,8 @@
 	        _this.state = {
 	            selected: {},
 	            noteOnChromeStorage: '',
-	            newNote: ''
+	            newNote: 'oldNotes',
+	            show: false
 	        };
 	
 	        _this.addFavorite = _this.addFavorite.bind(_this);
@@ -57459,7 +57338,9 @@
 	        key: 'componentWillReceiveProps',
 	        value: function componentWillReceiveProps(newProps, oldProps) {
 	            this.setState({
-	                favorites: newProps.favorites
+	                favorites: newProps.favorites,
+	                noteOnChromeStorage: newProps.noteOnChromeStorage,
+	                newNote: newProps.newNote
 	            });
 	        }
 	
@@ -57468,57 +57349,37 @@
 	    }, {
 	        key: 'addFavorite',
 	        value: function addFavorite(phone) {
-	
+	            chrome.storage.sync.clear();
 	            _store2.default.dispatch((0, _favorites.addFavorite)(phone));
-	
-	            // chrome.storage.sync.clear()
-	
-	            // chrome.storage.sync.get(function(results) {
-	            //
-	            //     if (!results.hasOwnProperty('favorites')){
-	            //         chrome.storage.sync.set({'favorites': [phone]}, function() {
-	            //             // do sth after set, maybe alert
-	            //         });
-	            //     } else {
-	            //         if (results.favorites.indexOf(phone) === -1){
-	            //             const favorites = results.favorites.concat([phone]);
-	            //             chrome.storage.sync.set({'favorites': favorites}, function() {
-	            //                 //maybe alert user 'added'
-	            //             });
-	            //         }
-	            //     }
-	            // });
 	        }
 	    }, {
 	        key: 'getNote',
-	
-	
-	        // once the "note" is clicked, saved the target restaurant in state,
-	        // get the note saved on chrome.storage.sync for that restaurant, set it to state also
 	        value: function getNote(phone) {
+	            _store2.default.dispatch((0, _favorites.getAllNotes)());
+	            this.setState({ show: true });
 	            this.setState({ selected: phone });
-	
-	            chrome.storage.sync.get(function (notes) {
-	                if (notes.hasOwnProperty(phone)) {
-	                    this.setState({ noteOnChromeStorage: notes });
-	                }
-	            });
+	            _store2.default.dispatch((0, _favorites.getNoteForRestaurant)(phone));
 	        }
+	
+	        // get the note from textArea, save it to the state
+	
 	    }, {
 	        key: 'takeNote',
 	        value: function takeNote(event) {
-	            event.preventDefault();
 	            this.setState({ newNote: event.target.value });
 	        }
 	    }, {
 	        key: 'saveNote',
-	        value: function saveNote(event) {
-	            event.preventDefault();
+	        value: function saveNote(phone) {
+	            _store2.default.dispatch((0, _favorites.saveNoteForRestaurant)(phone, this.state.newNote));
+	            this.setState({ show: false });
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
+	
+	            console.log(this.state.newNote);
 	
 	            var favorites = this.props.favorites;
 	            var restaurants = this.props.restaurants;
@@ -57527,29 +57388,7 @@
 	                { id: 'add' },
 	                'Add to Favorite'
 	            );
-	            var popoverLeft = _react2.default.createElement(
-	                _reactBootstrap.Popover,
-	                { id: 'popover-positioned-left', title: 'Tips' },
-	                _react2.default.createElement(
-	                    'form',
-	                    null,
-	                    _react2.default.createElement('textarea', { id: 'note', onChange: this.takeNote, defaultValue: this.state.noteOnChromeStorage }),
-	                    _react2.default.createElement(
-	                        'p',
-	                        { id: 'pop-over-buttons' },
-	                        _react2.default.createElement(
-	                            _reactBootstrap.Button,
-	                            { className: 'btn btn-danger' },
-	                            'Close'
-	                        ),
-	                        _react2.default.createElement(
-	                            _reactBootstrap.Button,
-	                            { className: 'btn btn-info' },
-	                            'Save'
-	                        )
-	                    )
-	                )
-	            );
+	
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -57620,7 +57459,7 @@
 	                                            // if the restaurant is already in favorites, show the "note" button for memo
 	                                            favorites.indexOf(parseInt(restaurant.phone)) === -1 ? // restaurant not in favorites
 	                                            _react2.default.createElement(
-	                                                'p',
+	                                                'div',
 	                                                null,
 	                                                _react2.default.createElement(
 	                                                    _reactBootstrap.OverlayTrigger,
@@ -57636,17 +57475,54 @@
 	                                            ) :
 	                                            // if the restaurant is not in the restaurant, show the "add" button
 	                                            _react2.default.createElement(
-	                                                'p',
+	                                                'div',
 	                                                null,
 	                                                _react2.default.createElement(
-	                                                    _reactBootstrap.OverlayTrigger,
-	                                                    { trigger: 'focus', placement: 'left', overlay: popoverLeft },
+	                                                    _reactBootstrap.ButtonToolbar,
+	                                                    null,
 	                                                    _react2.default.createElement(
 	                                                        _reactBootstrap.Button,
-	                                                        { onClick: function onClick() {
+	                                                        { bsStyle: 'primary', onClick: function onClick() {
 	                                                                return _this2.getNote(parseInt(restaurant.phone.slice(1)));
 	                                                            } },
 	                                                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-edit' })
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        _reactBootstrap.Modal,
+	                                                        {
+	                                                            show: _this2.state.show,
+	                                                            onHide: _this2.hideModal,
+	                                                            dialogClassName: 'custom-modal'
+	                                                        },
+	                                                        _react2.default.createElement(
+	                                                            _reactBootstrap.Modal.Header,
+	                                                            null,
+	                                                            _react2.default.createElement(
+	                                                                _reactBootstrap.Modal.Title,
+	                                                                { id: 'contained-modal-title-md' },
+	                                                                restaurant.name
+	                                                            )
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            _reactBootstrap.Modal.Body,
+	                                                            null,
+	                                                            _react2.default.createElement(
+	                                                                'form',
+	                                                                null,
+	                                                                _react2.default.createElement('textarea', { id: 'note', onChange: _this2.takeNote, defaultValue: _this2.state.noteOnChromeStorage })
+	                                                            )
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            _reactBootstrap.Modal.Footer,
+	                                                            null,
+	                                                            _react2.default.createElement(
+	                                                                _reactBootstrap.Button,
+	                                                                { onClick: function onClick() {
+	                                                                        return _this2.saveNote(parseInt(restaurant.phone.slice(1)));
+	                                                                    } },
+	                                                                'Save'
+	                                                            )
+	                                                        )
 	                                                    )
 	                                                )
 	                                            )
@@ -57667,7 +57543,9 @@
 	var mapStateToProps = function mapStateToProps(state) {
 	    return {
 	        restaurants: state.result.restaurants,
-	        favorites: state.favorites.favorites
+	        favorites: state.favorites.favorites,
+	        noteOnChromeStorage: state.favorites.note,
+	        allNotes: state.favorites.notes
 	    };
 	};
 	

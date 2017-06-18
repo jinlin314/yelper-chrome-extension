@@ -41,9 +41,13 @@ body, section {			/* Change width and height to own preferences */
 	width: 8vh;
 }
 
+.custom-modal {
+	width: 90%;
+}
+
 #note {
-	width: 35vh;
-	height: 45vh;
+	width: 84vh;
+	height: 56vh;
 	background-color: #DFF7F7;
 }
 
