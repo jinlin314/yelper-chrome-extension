@@ -26259,7 +26259,7 @@
 	
 	var _restaurant = __webpack_require__(244);
 	
-	var _favorites = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./reducers/favorites\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _favorites = __webpack_require__(311);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -26270,7 +26270,9 @@
 	// get the location at start
 	
 	store.dispatch((0, _restaurant.geoFindMe)());
+	store.dispatch((0, _favorites.getFavoriteRestaurants)());
 	store.dispatch((0, _favorites.getAllFavorites)());
+	store.dispatch((0, _favorites.getAllNotes)());
 
 /***/ }),
 /* 242 */
@@ -26312,7 +26314,7 @@
 	
 	var rootReducer = (0, _redux.combineReducers)({
 	  result: __webpack_require__(244).default,
-	  favorites: __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./favorites\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())).default
+	  favorites: __webpack_require__(311).default
 	}); /**
 	     * Created by jinlin on 6/15/17.
 	     */
@@ -26376,6 +26378,7 @@
 	/* ------------------    REDUCER    --------------------- */
 	var initial_state = {
 	    restaurants: [],
+	    favoriteRestaurants: [],
 	    restaurant: null,
 	    location: null,
 	    reviews: [],
@@ -35817,7 +35820,219 @@
 	var clientSecret = exports.clientSecret = 'freTjoBNaRNsg2KCBvm83QBVN31kvkkPmvlI15HFRFczsM5RRJpmOErQTlB7f3pl';
 
 /***/ }),
-/* 311 */,
+/* 311 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = reducer;
+	// /**
+	//  * Created by jinlin on 6/15/17.
+	//  */
+	
+	// /* ------------------    ACTIONS    --------------------- */
+	
+	var GET_ALL_FAVORITES = 'GET_ALL_FAVORITES';
+	var ADD_FAVORITE = 'ADD_FAVORITE';
+	var ADD_FAVORITE_RESTAURANT = 'ADD_FAVORITE_RESTAURANT';
+	var GET_FAVORITES_RESTAURANTS = 'GET_FAVORITES_RESTAURANTS';
+	var UPDATE_FAVORITES = 'UPDATE_FAVORITES';
+	var UPDATE_FAVORITES_RESTAURANTS = 'UPDATE_FAVORITES_RESTAURANTS';
+	var TOGGLE_FAVORITES = 'TOGGLE_FAVORITES';
+	var REMOVE_FAVORITE = 'REMOVE_FAVORITE';
+	var GET_ALL_NOTES = 'GET_ALL_NOTES';
+	var GET_NOTE_FOR_RESTAURANT = 'GET_NOTE_FOR_RESTAURANT';
+	var SAVE_NOTE = 'SAVE_NOTE';
+	
+	// /* --------------    ACTION CREATORS    ----------------- */
+	
+	var getAll = function getAll(favorites) {
+	    return { type: GET_ALL_FAVORITES, favorites: favorites };
+	};
+	var add = function add(favorites) {
+	    return { type: ADD_FAVORITE, favorites: favorites };
+	};
+	var addFavRest = function addFavRest(favoriteRestaurants) {
+	    return { type: ADD_FAVORITE_RESTAURANT, favoriteRestaurants: favoriteRestaurants };
+	};
+	var updateFav = function updateFav(favorites) {
+	    return { type: UPDATE_FAVORITES, favorites: favorites };
+	};
+	var getFavRest = function getFavRest(favoriteRestaurants) {
+	    return { type: GET_FAVORITES_RESTAURANTS, favoriteRestaurants: favoriteRestaurants };
+	};
+	var updateFavRest = function updateFavRest(favoriteRestaurants) {
+	    return { type: UPDATE_FAVORITES_RESTAURANTS, favoriteRestaurants: favoriteRestaurants };
+	};
+	var showFavor = exports.showFavor = function showFavor(showBool) {
+	    return { type: TOGGLE_FAVORITES, showBool: showBool };
+	};
+	var getNotes = function getNotes(notes) {
+	    return { type: GET_ALL_NOTES, notes: notes };
+	};
+	var getNote = exports.getNote = function getNote(note) {
+	    return { type: GET_NOTE_FOR_RESTAURANT, note: note };
+	};
+	var saveNote = function saveNote(notes) {
+	    return { type: SAVE_NOTE, notes: notes };
+	};
+	
+	/* ------------------    REDUCER    --------------------- */
+	var initial_state = {
+	    favorites: [],
+	    favoriteRestaurants: [],
+	    notes: {},
+	    note: '',
+	    showBool: false
+	};
+	
+	function reducer() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initial_state;
+	    var action = arguments[1];
+	
+	    var newState = Object.assign({}, state);
+	
+	    switch (action.type) {
+	        case GET_ALL_FAVORITES:
+	            newState.favorites = action.favorites;
+	            break;
+	        case ADD_FAVORITE:
+	            newState.favorites = action.favorites;
+	            break;
+	        case ADD_FAVORITE_RESTAURANT:
+	            newState.favoriteRestaurants = action.favoriteRestaurants;
+	            break;
+	        case GET_FAVORITES_RESTAURANTS:
+	            newState.favoriteRestaurants = action.favoriteRestaurants;
+	            break;
+	        case UPDATE_FAVORITES:
+	            newState.favorites = action.favorites;
+	            break;
+	        case UPDATE_FAVORITES_RESTAURANTS:
+	            newState.favoriteRestaurants = action.favoriteRestaurants;
+	            break;
+	        case TOGGLE_FAVORITES:
+	            newState.showBool = action.showBool;
+	            break;
+	        case GET_ALL_NOTES:
+	            newState.notes = action.notes;
+	            break;
+	        case GET_NOTE_FOR_RESTAURANT:
+	            newState.note = action.note;
+	            break;
+	        case SAVE_NOTE:
+	            newState.note = action.note;
+	            break;
+	        default:
+	            return state;
+	    }
+	    return newState;
+	}
+	
+	// /* ------------       DISPATCHERS     ------------------ */
+	
+	var getAllFavorites = exports.getAllFavorites = function getAllFavorites() {
+	    return function (dispatch) {
+	        chrome.storage.sync.get(function (results) {
+	            if (results.hasOwnProperty('favorites')) {
+	                dispatch(getAll(results.favorites));
+	            } else {
+	                dispatch(getAll([]));
+	            }
+	        });
+	    };
+	};
+	
+	var getFavoriteRestaurants = exports.getFavoriteRestaurants = function getFavoriteRestaurants() {
+	    return function (dispatch) {
+	        chrome.storage.sync.get(function (results) {
+	            if (results.hasOwnProperty('favoriteRestaurants')) {
+	                dispatch(getFavRest(results.favoriteRestaurants));
+	            } else {
+	                dispatch(getFavRest([]));
+	            }
+	        });
+	    };
+	};
+	
+	var addFavorite = exports.addFavorite = function addFavorite(phone, restaurant) {
+	    return function (dispatch) {
+	        chrome.storage.sync.get(function (results) {
+	
+	            if (!results.hasOwnProperty('favorites')) {
+	                chrome.storage.sync.set({ 'favorites': [phone] }, function () {
+	                    dispatch(add([phone]));
+	                });
+	                chrome.storage.sync.set({ 'favoriteRestaurants': [restaurant] }, function () {
+	                    dispatch(addFavRest([restaurant]));
+	                });
+	            } else {
+	                if (results.favorites.indexOf(phone) === -1) {
+	                    var favorites = results.favorites.concat([phone]);
+	                    chrome.storage.sync.set({ 'favorites': favorites }, function () {
+	                        dispatch(add(favorites));
+	                    });
+	                    var favRestaurants = results.favoriteRestaurants.concat([restaurant]);
+	                    chrome.storage.sync.set({ 'favoriteRestaurants': favRestaurants }, function () {
+	                        dispatch(addFavRest(favRestaurants));
+	                    });
+	                }
+	            }
+	        });
+	    };
+	};
+	
+	var updateFavoriteRestaurants = exports.updateFavoriteRestaurants = function updateFavoriteRestaurants(favorites, favoriteRestaurants) {
+	    return function (dispatch) {
+	        chrome.storage.sync.set({ 'favorites': favorites }, function () {
+	            dispatch(updateFav(favorites));
+	        });
+	        chrome.storage.sync.set({ 'favoriteRestaurants': favoriteRestaurants }, function () {
+	            dispatch(updateFavRest(favoriteRestaurants));
+	        });
+	    };
+	};
+	
+	// =========== NOTES DISPATCHERS ================= //
+	
+	var getAllNotes = exports.getAllNotes = function getAllNotes() {
+	    return function (dispatch) {
+	        chrome.storage.sync.get(function (results) {
+	            if (results.hasOwnProperty('notes')) {
+	                dispatch(getNotes(results.notes));
+	            } else {
+	                dispatch(getNotes({}));
+	            }
+	        });
+	    };
+	};
+	
+	var saveNoteForRestaurant = exports.saveNoteForRestaurant = function saveNoteForRestaurant(phone, note) {
+	    return function (dispatch) {
+	        var newNote = {};
+	        newNote[phone] = note;
+	        console.log('new note', newNote);
+	        var notes = void 0;
+	
+	        chrome.storage.sync.get(function (results) {
+	            if (!results.hasOwnProperty('notes')) {
+	                notes = Object.assign(newNote);
+	            } else {
+	                console.log('prev notes', results.notes);
+	                notes = Object.assign({}, results.notes, newNote);
+	                console.log('after added note', notes);
+	            }
+	            chrome.storage.sync.set({ 'notes': notes }, function () {
+	                dispatch(saveNote(notes));
+	            });
+	        });
+	    };
+	};
+
+/***/ }),
 /* 312 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -35919,7 +36134,7 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    null,
-	                    this.props.searchBool ? _react2.default.createElement(_Result2.default, null) : _react2.default.createElement(_Home2.default, null)
+	                    this.props.searchBool || this.props.showBool ? _react2.default.createElement(_Result2.default, null) : _react2.default.createElement(_Home2.default, null)
 	                )
 	            );
 	        }
@@ -35932,7 +36147,8 @@
 	    return {
 	        restaurants: state.result.restaurants,
 	        searchBool: state.result.search,
-	        location: state.result.location
+	        location: state.result.location,
+	        showBool: state.favorites.showBool
 	    };
 	};
 	
@@ -35969,6 +36185,8 @@
 	
 	var _restaurant = __webpack_require__(244);
 	
+	var _favorites = __webpack_require__(311);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -35995,6 +36213,7 @@
 	        // this.geoFindMe = this.geoFindMe.bind(this);
 	        _this.setFilter = _this.setFilter.bind(_this);
 	        _this.onSearchSubmit = _this.onSearchSubmit.bind(_this);
+	        _this.showFavorites = _this.showFavorites.bind(_this);
 	        return _this;
 	    }
 	
@@ -36013,6 +36232,7 @@
 	        key: 'onSearchSubmit',
 	        value: function onSearchSubmit(event) {
 	            event.preventDefault();
+	            _store2.default.dispatch((0, _favorites.showFavor)(false));
 	
 	            var keywords = event.target.keywords.value;
 	            var filterType = this.state.selectedFilter;
@@ -36025,6 +36245,11 @@
 	                var address = results[3].formatted_address;
 	                _store2.default.dispatch((0, _restaurant.yelpSearch)(keywords, filterType, address));
 	            }).catch(console.error);
+	        }
+	    }, {
+	        key: 'showFavorites',
+	        value: function showFavorites() {
+	            _store2.default.dispatch((0, _favorites.showFavor)(true));
 	        }
 	    }, {
 	        key: 'render',
@@ -36110,7 +36335,7 @@
 	                                    ),
 	                                    _react2.default.createElement(
 	                                        _reactBootstrap.Button,
-	                                        null,
+	                                        { onClick: this.showFavorites },
 	                                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-star-empty' })
 	                                    )
 	                                )
@@ -57219,16 +57444,6 @@
 	
 	var _reactRedux = __webpack_require__(205);
 	
-	var _store = __webpack_require__(241);
-	
-	var _store2 = _interopRequireDefault(_store);
-	
-	var _axios = __webpack_require__(568);
-	
-	var _axios2 = _interopRequireDefault(_axios);
-	
-	var _restaurant = __webpack_require__(244);
-	
 	var _reactBootstrap = __webpack_require__(316);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -57301,7 +57516,7 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _favorites = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../reducers/favorites\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _favorites = __webpack_require__(311);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -57322,13 +57537,13 @@
 	        var _this = _possibleConstructorReturn(this, (Result.__proto__ || Object.getPrototypeOf(Result)).call(this, props));
 	
 	        _this.state = {
-	            selected: {},
-	            noteOnChromeStorage: '',
-	            newNote: 'oldNotes',
-	            show: false
+	            newNote: '',
+	            showNote: false,
+	            selectedRestaurant: {}
 	        };
 	
 	        _this.addFavorite = _this.addFavorite.bind(_this);
+	        _this.deleteFavorite = _this.deleteFavorite.bind(_this);
 	        _this.getNote = _this.getNote.bind(_this);
 	        _this.takeNote = _this.takeNote.bind(_this);
 	        return _this;
@@ -57339,8 +57554,8 @@
 	        value: function componentWillReceiveProps(newProps, oldProps) {
 	            this.setState({
 	                favorites: newProps.favorites,
-	                noteOnChromeStorage: newProps.noteOnChromeStorage,
-	                newNote: newProps.newNote
+	                favoriteRestaurants: newProps.favoriteRestaurants,
+	                allNotes: newProps.allNotes
 	            });
 	        }
 	
@@ -57348,17 +57563,30 @@
 	
 	    }, {
 	        key: 'addFavorite',
-	        value: function addFavorite(phone) {
-	            chrome.storage.sync.clear();
-	            _store2.default.dispatch((0, _favorites.addFavorite)(phone));
+	        value: function addFavorite(phone, restaurant) {
+	            // chrome.storage.sync.clear();
+	            _store2.default.dispatch((0, _favorites.addFavorite)(phone, restaurant));
+	        }
+	    }, {
+	        key: 'deleteFavorite',
+	        value: function deleteFavorite(index, phone) {
+	            console.log("target: ", phone);
+	            console.log('fav: ', this.props.favorites[index]);
+	            console.log('favRes: ', this.props.favoriteRestaurants[index]);
+	
+	            var favorites = this.props.favorites.slice(0, index).concat(this.props.favorites.slice(index + 1));
+	            var favoriteRestaurants = this.props.favoriteRestaurants.slice(0, index).concat(this.props.favoriteRestaurants.slice(index + 1));
+	            _store2.default.dispatch((0, _favorites.updateFavoriteRestaurants)(favorites, favoriteRestaurants));
 	        }
 	    }, {
 	        key: 'getNote',
-	        value: function getNote(phone) {
-	            _store2.default.dispatch((0, _favorites.getAllNotes)());
-	            this.setState({ show: true });
-	            this.setState({ selected: phone });
-	            _store2.default.dispatch((0, _favorites.getNoteForRestaurant)(phone));
+	        value: function getNote(phone, restaurant) {
+	            this.setState({ selectedRestaurant: restaurant });
+	            this.setState({ showNote: true });
+	            var notes = this.props.allNotes;
+	            if (notes.hasOwnProperty(phone)) {
+	                _store2.default.dispatch((0, _favorites.getNote)(notes[phone]));
+	            }
 	        }
 	
 	        // get the note from textArea, save it to the state
@@ -57372,17 +57600,21 @@
 	        key: 'saveNote',
 	        value: function saveNote(phone) {
 	            _store2.default.dispatch((0, _favorites.saveNoteForRestaurant)(phone, this.state.newNote));
-	            this.setState({ show: false });
+	            _store2.default.dispatch((0, _favorites.getAllNotes)());
+	            this.setState({ showNote: false });
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
 	
-	            console.log(this.state.newNote);
-	
 	            var favorites = this.props.favorites;
-	            var restaurants = this.props.restaurants;
+	            var restaurants = void 0;
+	            if (this.props.showBool) {
+	                restaurants = this.props.favoriteRestaurants;
+	            } else {
+	                restaurants = this.props.restaurants;
+	            }
 	            var tooltip = _react2.default.createElement(
 	                _reactBootstrap.Tooltip,
 	                { id: 'add' },
@@ -57395,10 +57627,25 @@
 	                _react2.default.createElement(
 	                    'section',
 	                    null,
-	                    favorites && restaurants.map(function (restaurant, i) {
+	                    this.props.showBool ? _react2.default.createElement(
+	                        _reactBootstrap.Well,
+	                        { bsStyle: 'small' },
+	                        _react2.default.createElement(
+	                            'span',
+	                            { className: 'glyphicon glyphicon-star-empty' },
+	                            ' ',
+	                            _react2.default.createElement(
+	                                'strong',
+	                                null,
+	                                'My Favorites Eaters'
+	                            ),
+	                            ' '
+	                        )
+	                    ) : _react2.default.createElement('div', null),
+	                    favorites && restaurants.map(function (restaurant, index) {
 	                        return _react2.default.createElement(
 	                            'div',
-	                            { key: i },
+	                            { key: index },
 	                            _react2.default.createElement(
 	                                _reactBootstrap.Table,
 	                                null,
@@ -57467,7 +57714,7 @@
 	                                                    _react2.default.createElement(
 	                                                        _reactBootstrap.Button,
 	                                                        { onClick: function onClick() {
-	                                                                return _this2.addFavorite(parseInt(restaurant.phone.slice(1)));
+	                                                                return _this2.addFavorite(parseInt(restaurant.phone.slice(1)), restaurant);
 	                                                            } },
 	                                                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-plus' })
 	                                                    )
@@ -57483,14 +57730,14 @@
 	                                                    _react2.default.createElement(
 	                                                        _reactBootstrap.Button,
 	                                                        { bsStyle: 'primary', onClick: function onClick() {
-	                                                                return _this2.getNote(parseInt(restaurant.phone.slice(1)));
+	                                                                return _this2.getNote(parseInt(restaurant.phone.slice(1)), restaurant);
 	                                                            } },
 	                                                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-edit' })
 	                                                    ),
 	                                                    _react2.default.createElement(
 	                                                        _reactBootstrap.Modal,
 	                                                        {
-	                                                            show: _this2.state.show,
+	                                                            show: _this2.state.showNote,
 	                                                            onHide: _this2.hideModal,
 	                                                            dialogClassName: 'custom-modal'
 	                                                        },
@@ -57500,7 +57747,7 @@
 	                                                            _react2.default.createElement(
 	                                                                _reactBootstrap.Modal.Title,
 	                                                                { id: 'contained-modal-title-md' },
-	                                                                restaurant.name
+	                                                                _this2.state.selectedRestaurant.name
 	                                                            )
 	                                                        ),
 	                                                        _react2.default.createElement(
@@ -57509,7 +57756,7 @@
 	                                                            _react2.default.createElement(
 	                                                                'form',
 	                                                                null,
-	                                                                _react2.default.createElement('textarea', { id: 'note', onChange: _this2.takeNote, defaultValue: _this2.state.noteOnChromeStorage })
+	                                                                _react2.default.createElement('textarea', { id: 'note', onChange: _this2.takeNote, defaultValue: _this2.props.note })
 	                                                            )
 	                                                        ),
 	                                                        _react2.default.createElement(
@@ -57518,13 +57765,20 @@
 	                                                            _react2.default.createElement(
 	                                                                _reactBootstrap.Button,
 	                                                                { onClick: function onClick() {
-	                                                                        return _this2.saveNote(parseInt(restaurant.phone.slice(1)));
+	                                                                        return _this2.saveNote(parseInt(_this2.state.selectedRestaurant.phone.slice(1)));
 	                                                                    } },
 	                                                                'Save'
 	                                                            )
 	                                                        )
 	                                                    )
-	                                                )
+	                                                ),
+	                                                _this2.props.showBool ? _react2.default.createElement(
+	                                                    _reactBootstrap.Button,
+	                                                    { bsStyle: 'primary', onClick: function onClick() {
+	                                                            return _this2.deleteFavorite(index, restaurant.phone);
+	                                                        } },
+	                                                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-trash' })
+	                                                ) : _react2.default.createElement('div', null)
 	                                            )
 	                                        )
 	                                    )
@@ -57543,8 +57797,10 @@
 	var mapStateToProps = function mapStateToProps(state) {
 	    return {
 	        restaurants: state.result.restaurants,
+	        favoriteRestaurants: state.favorites.favoriteRestaurants,
 	        favorites: state.favorites.favorites,
-	        noteOnChromeStorage: state.favorites.note,
+	        showBool: state.favorites.showBool,
+	        note: state.favorites.note,
 	        allNotes: state.favorites.notes
 	    };
 	};

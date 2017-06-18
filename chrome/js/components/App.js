@@ -20,7 +20,7 @@ export class App extends Component {
                </div>
                <div>
                    {
-                       (this.props.searchBool)
+                       (this.props.searchBool || this.props.showBool)
                        ? <Result />
                        : <Home />
                    }
@@ -34,7 +34,8 @@ const mapStateToProps = (state) => {
     return {
         restaurants: state.result.restaurants,
         searchBool: state.result.search,
-        location: state.result.location
+        location: state.result.location,
+        showBool: state.favorites.showBool
     }
 };
 

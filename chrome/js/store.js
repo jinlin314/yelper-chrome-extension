@@ -5,7 +5,7 @@ import {createLogger} from 'redux-logger'
 import thunkMiddleware from 'redux-thunk'
 
 import {geoFindMe} from './reducers/restaurant';
-import {getAllFavorites} from './reducers/favorites';
+import {getAllFavorites, getFavoriteRestaurants, getAllNotes} from './reducers/favorites';
 
 const store = createStore(
     rootReducer,
@@ -21,4 +21,6 @@ export default store;
 
 // get the location at start
 store.dispatch(geoFindMe());
+store.dispatch(getFavoriteRestaurants());
 store.dispatch(getAllFavorites());
+store.dispatch(getAllNotes());

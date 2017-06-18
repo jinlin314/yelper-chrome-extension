@@ -26,6 +26,7 @@ const locate = (location) => ({ type: GET_LOCATION, location});
 /* ------------------    REDUCER    --------------------- */
 const initial_state = {
     restaurants: [],
+    favoriteRestaurants: [],
     restaurant: null,
     location: null,
     reviews: [],
@@ -126,4 +127,5 @@ export const yelpSearch = (keywords, filterType, location) => dispatch => {
     }).catch(e => {
         console.log(e);
     });
-}
+};
+
