@@ -152,7 +152,6 @@ export const getAllNotes = () => dispatch => {
 export const saveNoteForRestaurant = (phone, note) => dispatch => {
     const newNote = {};
     newNote[phone] = note;
-    console.log('new note', newNote);
     let notes;
 
     chrome.storage.sync.get(function(results) {
@@ -160,7 +159,7 @@ export const saveNoteForRestaurant = (phone, note) => dispatch => {
             notes = Object.assign(newNote);
         } else {
             console.log('prev notes', results.notes);
-            notes = Object.assign({}, results.notes, newNote);
+            notes = Object.assign(results.notes, newNote);
             console.log('after added note', notes);
         }
         chrome.storage.sync.set({'notes': notes}, function() {

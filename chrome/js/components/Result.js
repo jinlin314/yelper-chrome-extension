@@ -12,22 +12,26 @@ export class Result extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            newNote: '',
+            newNote: this.props.note,
             showNote: false,
-            selectedRestaurant: {}
+            selectedRestaurant: {},
+            grades: []
         };
 
         this.addFavorite = this.addFavorite.bind(this);
         this.deleteFavorite = this.deleteFavorite.bind(this);
         this.getNote = this.getNote.bind(this);
         this.takeNote = this.takeNote.bind(this);
+        this.showGrades = this.showGrades.bind(this);
     }
 
-    componentWillReceiveProps(newProps, oldProps) {
+    componentWillReceiveProps(newProps) {
         this.setState({
             favorites: newProps.favorites,
             favoriteRestaurants: newProps.favoriteRestaurants,
-            allNotes: newProps.allNotes
+            allNotes: newProps.allNotes,
+            note: newProps.note,
+            nycRecords: newProps.nycRecords
         })
     }
 
@@ -63,8 +67,25 @@ export class Result extends Component {
 
     saveNote(phone) {
         store.dispatch(saveNoteForRestaurant(phone, this.state.newNote));
-        store.dispatch(getAllNotes());
+        // store.dispatch(getAllNotes());
         this.setState({ showNote: false });
+    }
+
+    showGrades(phone) {
+        console.log("showGrades handler")
+        const grades = [];
+        const thisYear = new Date().getFullYear();
+        const nycRecords = this.props.nycRecords;
+        for (let i = 0; i < nycRecords.length; i++) {
+            let record = [];
+            let year = parseInt(nycRecords[i][16].slice(0,3));
+            if (nycRecords[i].indexOf(phone) !== -1) { // nycRecords[i][14] is the business' phone number in string
+                if (nycRecords[i][22] ) { // nycRecords[i][22] is the Health Inspection Grade, null if not available
+                    console.log(nycRecords[i][22], nycRecords[i][16])
+                }
+            }
+        }
+        // this.setState({grades: grades});
     }
 
     render() {
@@ -76,6 +97,7 @@ export class Result extends Component {
             restaurants = this.props.restaurants;
         }
         const tooltip = <Tooltip id="add">Add to Favorite</Tooltip>;
+
 
         return  (
             <div>
@@ -113,6 +135,15 @@ export class Result extends Component {
                                             </td>
                                             <td className="addFav">
                                                 {
+                                                    (this.props.nycRecords.length > 0)
+                                                        ? (
+                                                        <Button bsStyle="primary" onClick={() => this.showGrades(restaurant.phone.slice(1))}>
+                                                            <span className="glyphicon glyphicon-search">Grade</span>
+                                                        </Button>
+                                                    )
+                                                        : (<div></div>)
+                                                }
+                                                {
                                                     // if the restaurant is already in favorites, show the "note" button for memo
                                                     (favorites.indexOf(parseInt(restaurant.phone)) === -1) // restaurant not in favorites
                                                     ? (
@@ -127,6 +158,7 @@ export class Result extends Component {
                                                     : (
                                                         <div>
                                                             <ButtonToolbar>
+
                                                                 <Button bsStyle="primary" onClick={() => this.getNote(parseInt(restaurant.phone.slice(1)), restaurant)}>
                                                                     <span className="glyphicon glyphicon-edit"></span>
                                                                 </Button>
@@ -141,7 +173,7 @@ export class Result extends Component {
                                                                     </Modal.Header>
                                                                     <Modal.Body>
                                                                         <form>
-                                                                            <textarea id="note" onChange={this.takeNote} defaultValue={this.props.note}></textarea>
+                                                                            <textarea id="note" onChange={this.takeNote} defaultValue={this.state.newNote}></textarea>
                                                                         </form>
                                                                     </Modal.Body>
                                                                     <Modal.Footer>
@@ -176,6 +208,7 @@ export class Result extends Component {
 
 const mapStateToProps = (state) => {
     return {
+        nycRecords: state.result.nycRecords,
         restaurants: state.result.restaurants,
         favoriteRestaurants: state.favorites.favoriteRestaurants,
         favorites: state.favorites.favorites,
