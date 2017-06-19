@@ -158,9 +158,7 @@ export const saveNoteForRestaurant = (phone, note) => dispatch => {
         if (!results.hasOwnProperty('notes')){
             notes = Object.assign(newNote);
         } else {
-            console.log('prev notes', results.notes);
             notes = Object.assign(results.notes, newNote);
-            console.log('after added note', notes);
         }
         chrome.storage.sync.set({'notes': notes}, function() {
             dispatch(saveNote(notes));

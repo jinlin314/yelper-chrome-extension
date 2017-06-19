@@ -34,9 +34,14 @@ export class Navigation extends Component {
     onSearchSubmit(event) {
         event.preventDefault();
         store.dispatch(showFavor(false));
-
-        let keywords = event.target.keywords.value;
         let filterType = this.state.selectedFilter;
+        let keywords;
+        if (this.state.selectedFilter === "delivery"){
+            keywords = '';
+        }else {
+            keywords = event.target.keywords.value;
+        }
+
         let latitude  = this.props.location[0];
         let longitude = this.props.location[1];
 
@@ -64,10 +69,8 @@ export class Navigation extends Component {
                         <div>
                         <Navbar>
                             <Navbar.Header>
-                                <Navbar.Brand>
-                                    <Image className="logo" src="../../src/browser_action/img/logo1.png"></Image>
-                                    <a>YelpMe</a>
-                                </Navbar.Brand>
+                                <Image className="logo" src="../../src/browser_action/img/logo48.png"></Image>
+                                <a>YelpMe</a>
                                 <Navbar.Toggle />
                             </Navbar.Header>
                             <Navbar.Collapse>
@@ -79,9 +82,16 @@ export class Navigation extends Component {
                                             <li><a onClick={()=>this.setFilter("delivery")}>Delivery</a></li>
                                         </ul>
                                         {' '}
-                                        <FormGroup>
-                                            <FormControl name="keywords" id="searchBox" type="text" placeholder="Search" />
-                                        </FormGroup>
+                                        {
+                                            (this.state.selectedFilter !== "delivery")
+                                            ? (
+                                                <FormGroup>
+                                                    <FormControl name="keywords" id="searchBox" type="text"
+                                                                 placeholder="Search"/>
+                                                </FormGroup>
+                                            )
+                                                :(<FormGroup></FormGroup>)
+                                        }
                                         {' '}
                                         <Button type="submit" onClick={this.geoFindMe}>Search</Button>
                                         <Button onClick={this.showFavorites}><span className="glyphicon glyphicon-star-empty"></span></Button>
@@ -96,7 +106,7 @@ export class Navigation extends Component {
                             <Navbar>
                                 <Navbar.Header>
                                     <Navbar.Brand>
-                                        <Image className="logo" src="../../src/browser_action/img/logo1.png"></Image>
+                                        <Image className="logo" src="../../src/browser_action/img/logo48.png"></Image>
                                         <a>YelpMe</a>
                                     </Navbar.Brand>
                                     <Navbar.Toggle />

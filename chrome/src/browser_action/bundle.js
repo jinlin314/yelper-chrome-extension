@@ -37584,9 +37584,7 @@
 	            if (!results.hasOwnProperty('notes')) {
 	                notes = Object.assign(newNote);
 	            } else {
-	                console.log('prev notes', results.notes);
 	                notes = Object.assign(results.notes, newNote);
-	                console.log('after added note', notes);
 	            }
 	            chrome.storage.sync.set({ 'notes': notes }, function () {
 	                dispatch(saveNote(notes));
@@ -37796,9 +37794,14 @@
 	        value: function onSearchSubmit(event) {
 	            event.preventDefault();
 	            _store2.default.dispatch((0, _favorites.showFavor)(false));
-	
-	            var keywords = event.target.keywords.value;
 	            var filterType = this.state.selectedFilter;
+	            var keywords = void 0;
+	            if (this.state.selectedFilter === "delivery") {
+	                keywords = '';
+	            } else {
+	                keywords = event.target.keywords.value;
+	            }
+	
 	            var latitude = this.props.location[0];
 	            var longitude = this.props.location[1];
 	
@@ -37831,15 +37834,11 @@
 	                        _react2.default.createElement(
 	                            _reactBootstrap.Navbar.Header,
 	                            null,
+	                            _react2.default.createElement(_reactBootstrap.Image, { className: 'logo', src: '../../src/browser_action/img/logo48.png' }),
 	                            _react2.default.createElement(
-	                                _reactBootstrap.Navbar.Brand,
+	                                'a',
 	                                null,
-	                                _react2.default.createElement(_reactBootstrap.Image, { className: 'logo', src: '../../src/browser_action/img/logo1.png' }),
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    null,
-	                                    'YelpMe'
-	                                )
+	                                'YelpMe'
 	                            ),
 	                            _react2.default.createElement(_reactBootstrap.Navbar.Toggle, null)
 	                        ),
@@ -37885,11 +37884,12 @@
 	                                        )
 	                                    ),
 	                                    ' ',
-	                                    _react2.default.createElement(
+	                                    this.state.selectedFilter !== "delivery" ? _react2.default.createElement(
 	                                        _reactBootstrap.FormGroup,
 	                                        null,
-	                                        _react2.default.createElement(_reactBootstrap.FormControl, { name: 'keywords', id: 'searchBox', type: 'text', placeholder: 'Search' })
-	                                    ),
+	                                        _react2.default.createElement(_reactBootstrap.FormControl, { name: 'keywords', id: 'searchBox', type: 'text',
+	                                            placeholder: 'Search' })
+	                                    ) : _react2.default.createElement(_reactBootstrap.FormGroup, null),
 	                                    ' ',
 	                                    _react2.default.createElement(
 	                                        _reactBootstrap.Button,
@@ -37917,7 +37917,7 @@
 	                            _react2.default.createElement(
 	                                _reactBootstrap.Navbar.Brand,
 	                                null,
-	                                _react2.default.createElement(_reactBootstrap.Image, { className: 'logo', src: '../../src/browser_action/img/logo1.png' }),
+	                                _react2.default.createElement(_reactBootstrap.Image, { className: 'logo', src: '../../src/browser_action/img/logo48.png' }),
 	                                _react2.default.createElement(
 	                                    'a',
 	                                    null,
@@ -57573,7 +57573,7 @@
 	        var _this = _possibleConstructorReturn(this, (Result.__proto__ || Object.getPrototypeOf(Result)).call(this, props));
 	
 	        _this.state = {
-	            newNote: '',
+	            newNote: _this.props.note || '',
 	            showNote: false,
 	            selectedRestaurant: {}
 	        };
@@ -57640,6 +57640,12 @@
 	            this.setState({ showNote: false });
 	        }
 	    }, {
+	        key: 'closeNote',
+	        value: function closeNote() {
+	            _store2.default.dispatch((0, _favorites.getAllNotes)());
+	            this.setState({ showNote: false });
+	        }
+	    }, {
 	        key: 'showGrades',
 	        value: function showGrades(phone) {
 	            var grades = [];
@@ -57650,7 +57656,8 @@
 	                    // nycRecords[i][14] is the business' phone number in string
 	                    if (nycRecords[i][22]) {
 	                        // nycRecords[i][22] is the Health Inspection Grade, null if not available
-	                        record = '(' + nycRecords[i][22] + ') - ' + nycRecords[i][16].slice(0, 10);
+	                        record = '(' + nycRecords[i][22] + ') -- ' + nycRecords[i][16].slice(0, 10) + ' -- ' + nycRecords[i][19];
+	
 	                        grades.push(record);
 	                    }
 	                }
@@ -57675,7 +57682,11 @@
 	                'Add to Favorite'
 	            );
 	
-	            return _react2.default.createElement(
+	            return restaurants.length === 0 && !this.props.showBool ? _react2.default.createElement(
+	                _reactBootstrap.Panel,
+	                null,
+	                _react2.default.createElement(_reactBootstrap.Image, { id: 'home', src: '../../src/browser_action/img/no-results-found.png' })
+	            ) : _react2.default.createElement(
 	                'div',
 	                null,
 	                _react2.default.createElement(
@@ -57758,14 +57769,19 @@
 	                                            { className: 'addFav' },
 	                                            _this2.props.nycRecords.length > 0 ? _react2.default.createElement(
 	                                                _reactBootstrap.OverlayTrigger,
-	                                                { trigger: 'click', placement: 'left', overlay: _react2.default.createElement(
+	                                                { trigger: 'focus', placement: 'left', overlay: _react2.default.createElement(
 	                                                        _reactBootstrap.Popover,
 	                                                        { id: 'popover-positioned-left', title: 'Health Inspection Grades' },
-	                                                        _this2.props.grades && _this2.props.grades.map(function (grade) {
+	                                                        _this2.props.grades && _this2.props.grades.map(function (grade, i) {
 	                                                            return _react2.default.createElement(
-	                                                                'h4',
-	                                                                null,
-	                                                                grade
+	                                                                'div',
+	                                                                { key: i },
+	                                                                _react2.default.createElement(
+	                                                                    'h5',
+	                                                                    null,
+	                                                                    grade
+	                                                                ),
+	                                                                _react2.default.createElement('hr', null)
 	                                                            );
 	                                                        })
 	                                                    ) },
@@ -57844,8 +57860,15 @@
 	                                                            _react2.default.createElement(
 	                                                                _reactBootstrap.Button,
 	                                                                { onClick: function onClick() {
+	                                                                        return _this2.closeNote();
+	                                                                    }, bsStyle: 'danger' },
+	                                                                'Close'
+	                                                            ),
+	                                                            _react2.default.createElement(
+	                                                                _reactBootstrap.Button,
+	                                                                { onClick: function onClick() {
 	                                                                        return _this2.saveNote(parseInt(_this2.state.selectedRestaurant.phone.slice(1)));
-	                                                                    } },
+	                                                                    }, bsStyle: 'success' },
 	                                                                'Save'
 	                                                            )
 	                                                        )

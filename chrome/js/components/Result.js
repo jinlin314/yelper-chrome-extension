@@ -13,7 +13,7 @@ export class Result extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            newNote: '',
+            newNote: this.props.note || '',
             showNote: false,
             selectedRestaurant: {}
         };
@@ -68,6 +68,11 @@ export class Result extends Component {
         this.setState({ showNote: false });
     }
 
+    closeNote() {
+        store.dispatch(getAllNotes());
+        this.setState({ showNote: false });
+    }
+
     showGrades(phone) {
         let grades = [];
         const nycRecords = this.props.nycRecords;
@@ -75,7 +80,8 @@ export class Result extends Component {
             let record = '';
             if (nycRecords[i].indexOf(phone) !== -1) { // nycRecords[i][14] is the business' phone number in string
                 if (nycRecords[i][22] ) { // nycRecords[i][22] is the Health Inspection Grade, null if not available
-                    record = '(' + nycRecords[i][22] + ') - ' + nycRecords[i][16].slice(0,10);
+                    record = '(' + nycRecords[i][22] + ') -- ' + nycRecords[i][16].slice(0,10) + ' -- ' + nycRecords[i][19];
+
                     grades.push(record);
                 }
             }
@@ -94,6 +100,9 @@ export class Result extends Component {
         const tooltip = <Tooltip id="add">Add to Favorite</Tooltip>;
 
         return  (
+            (restaurants.length === 0 && !this.props.showBool)
+                ? (<Panel><Image id='home' src="../../src/browser_action/img/no-results-found.png" /></Panel>)
+            :(
             <div>
                 <section>
                     {
@@ -131,10 +140,17 @@ export class Result extends Component {
                                                 {
                                                     (this.props.nycRecords.length > 0)
                                                         ? (
-                                                            <OverlayTrigger trigger="click" placement="left" overlay={
+                                                            <OverlayTrigger trigger="focus" placement="left" overlay={
                                                                 <Popover id="popover-positioned-left" title="Health Inspection Grades">
                                                                     {
-                                                                        this.props.grades && this.props.grades.map(grade => { return(<h4>{grade}</h4>)})
+                                                                        this.props.grades && this.props.grades.map((grade, i) => {
+                                                                            return (
+                                                                                <div key={i}>
+                                                                                    <h5>{grade}</h5>
+                                                                                    <hr />
+                                                                                </div>
+                                                                            )
+                                                                        })
                                                                     }
                                                                 </Popover>
                                                             }>
@@ -179,7 +195,8 @@ export class Result extends Component {
                                                                         </form>
                                                                     </Modal.Body>
                                                                     <Modal.Footer>
-                                                                        <Button onClick={() => this.saveNote(parseInt(this.state.selectedRestaurant.phone.slice(1)))}>Save</Button>
+                                                                        <Button onClick={() => this.closeNote()} bsStyle="danger">Close</Button>
+                                                                        <Button onClick={() => this.saveNote(parseInt(this.state.selectedRestaurant.phone.slice(1)))} bsStyle="success">Save</Button>
                                                                     </Modal.Footer>
                                                                 </Modal>
                                                             </ButtonToolbar>
@@ -204,6 +221,7 @@ export class Result extends Component {
                     }
                 </section>
             </div>
+            )
         )
     }
 }
