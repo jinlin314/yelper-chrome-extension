@@ -5,11 +5,11 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import store from '../store';
-import {Navbar, FormGroup, FormControl, Button, Well} from 'react-bootstrap';
+import {Navbar, FormGroup, FormControl, Button, Image, Panel} from 'react-bootstrap';
 
 import axios from 'axios';
-import {yelpSearch} from '../reducers/restaurant'
-// import {yelpSearch} from '../utils'
+import {yelpSearch} from '../reducers/restaurant';
+import {showFavor} from '../reducers/favorites';
 
 export class Navigation extends Component {
     constructor(props) {
@@ -22,6 +22,7 @@ export class Navigation extends Component {
         // this.geoFindMe = this.geoFindMe.bind(this);
         this.setFilter = this.setFilter.bind(this);
         this.onSearchSubmit = this.onSearchSubmit.bind(this);
+        this.showFavorites = this.showFavorites.bind(this);
     }
 
     // Filter the narrow the search results
@@ -32,6 +33,7 @@ export class Navigation extends Component {
     // on submit, collect all datas, pass them into yelpSearch
     onSearchSubmit(event) {
         event.preventDefault();
+        store.dispatch(showFavor(false));
 
         let keywords = event.target.keywords.value;
         let filterType = this.state.selectedFilter;
@@ -42,11 +44,14 @@ export class Navigation extends Component {
             .then(res => res.data.results)
             .then(results => {
                 const address = results[3].formatted_address;
-                // yelpSearch(keywords, filterType, address);
                 store.dispatch(yelpSearch(keywords, filterType, address));
             })
             .catch(console.error)
 
+    }
+
+    showFavorites() {
+        store.dispatch(showFavor(true));
     }
 
 
@@ -60,7 +65,8 @@ export class Navigation extends Component {
                         <Navbar>
                             <Navbar.Header>
                                 <Navbar.Brand>
-                                    <a href="#">YelpEater</a>
+                                    <Image className="logo" src="../../src/browser_action/img/logo1.png"></Image>
+                                    <a>YelpMe</a>
                                 </Navbar.Brand>
                                 <Navbar.Toggle />
                             </Navbar.Header>
@@ -78,7 +84,7 @@ export class Navigation extends Component {
                                         </FormGroup>
                                         {' '}
                                         <Button type="submit" onClick={this.geoFindMe}>Search</Button>
-                                        <Button><span className="glyphicon glyphicon-time"></span></Button>
+                                        <Button onClick={this.showFavorites}><span className="glyphicon glyphicon-star-empty"></span></Button>
                                     </Navbar.Form>
                                 </form>
                             </Navbar.Collapse>
@@ -90,14 +96,13 @@ export class Navigation extends Component {
                             <Navbar>
                                 <Navbar.Header>
                                     <Navbar.Brand>
-                                        <a href="#">YelpEater</a>
+                                        <Image className="logo" src="../../src/browser_action/img/logo1.png"></Image>
+                                        <a>YelpMe</a>
                                     </Navbar.Brand>
                                     <Navbar.Toggle />
                                 </Navbar.Header>
                             </Navbar>
-                            <Well>
-                                Locating current Location...
-                            </Well>
+                            <Panel>Decting current loction...<Image id='loading' src="../../src/browser_action/img/loadinfo.gif" /></Panel>
                         </div>
                     )
                 }

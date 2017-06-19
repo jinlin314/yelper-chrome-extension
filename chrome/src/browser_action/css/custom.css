@@ -7,12 +7,21 @@
 body, section {			/* Change width and height to own preferences */
 	width: 500px;
 	height: 400px;
-	padding: 15px;
+	padding-left: 15px;
+	padding-right: 15px;
 	overflow-x: hidden;
+}
+
+.logo {
+	width: 10vh;
 }
 
 #searchBox {
 	width: 35vh;
+}
+
+#loading, #home {
+	width: 90vh;
 }
 
 .img {
@@ -30,6 +39,16 @@ body, section {			/* Change width and height to own preferences */
 
 .addFav {
 	width: 8vh;
+}
+
+.custom-modal {
+	width: 90%;
+}
+
+#note {
+	width: 84vh;
+	height: 56vh;
+	background-color: #DFF7F7;
 }
 
 /* Basic style tweaks */

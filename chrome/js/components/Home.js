@@ -4,9 +4,8 @@
 
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import store from '../store';
 
-import {Navbar, FormGroup, FormControl, Button, Well} from 'react-bootstrap';
+import {Panel,Image} from 'react-bootstrap';
 
 export class Home extends Component {
     constructor(props) {
@@ -16,7 +15,11 @@ export class Home extends Component {
     render() {
         return (
             <div>
-                <h1>home</h1>
+                {
+                    (this.props.location)
+                    ? (<Panel><Image id='home' src="../../src/browser_action/img/home.png" /></Panel>)
+                        : <div></div>
+                }
             </div>
         )
     }
@@ -24,7 +27,7 @@ export class Home extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        restaurants: state.result.restaurants
+        location: state.result.location
     }
 };
 

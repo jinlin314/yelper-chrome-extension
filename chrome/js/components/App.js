@@ -6,8 +6,6 @@ import Navbar from './Navbar';
 import Home from './Home';
 import Result from './Result';
 
-import {yelpSearch} from '../reducers/restaurant';
-
 
 export class App extends Component {
     constructor(props) {
@@ -15,7 +13,6 @@ export class App extends Component {
 
     }
     render(){
-        console.log('App props, ', this.props)
        return  (
            <div>
                <div>
@@ -23,7 +20,7 @@ export class App extends Component {
                </div>
                <div>
                    {
-                       (this.props.searchBool)
+                       (this.props.searchBool || this.props.showBool)
                        ? <Result />
                        : <Home />
                    }
@@ -37,7 +34,8 @@ const mapStateToProps = (state) => {
     return {
         restaurants: state.result.restaurants,
         searchBool: state.result.search,
-        location: state.result.location
+        location: state.result.location,
+        showBool: state.favorites.showBool
     }
 };
 

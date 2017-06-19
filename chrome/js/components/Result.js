@@ -3,40 +3,98 @@
  */
 
 import React, {Component} from 'react';
-import {Well, Table, Grid, Col, Row, Image, Panel, Button} from 'react-bootstrap';
+import {Modal, Well, Table, OverlayTrigger, Tooltip, ButtonToolbar, Image, Panel, Button} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import store from '../store';
+import {getAllFavorites, addFavorite, getNote, getAllNotes, saveNoteForRestaurant, updateFavoriteRestaurants} from '../reducers/favorites';
 
 export class Result extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selected: {}
+            newNote: '',
+            showNote: false,
+            selectedRestaurant: {}
         };
 
         this.addFavorite = this.addFavorite.bind(this);
+        this.deleteFavorite = this.deleteFavorite.bind(this);
+        this.getNote = this.getNote.bind(this);
+        this.takeNote = this.takeNote.bind(this);
+    }
+
+    componentWillReceiveProps(newProps, oldProps) {
+        this.setState({
+            favorites: newProps.favorites,
+            favoriteRestaurants: newProps.favoriteRestaurants,
+            allNotes: newProps.allNotes,
+            note: newProps.note
+        })
     }
 
     // use the restaurants' phone numbers as the keys, since they are unique
-    addFavorite(phone) {
-        // Save it using the Chrome extension storage API.
-        chrome.storage.sync.set({'value': theValue}, function() {
-            // Notify that we saved.
-            message('Settings saved');
-        });
+    addFavorite(phone, restaurant) {
+        // chrome.storage.sync.clear();
+        store.dispatch(addFavorite(phone, restaurant));
+    };
 
+    deleteFavorite(index, phone) {
+        console.log("target: ", phone);
+        console.log('fav: ', this.props.favorites[index]);
+        console.log('favRes: ', this.props.favoriteRestaurants[index]);
+
+        const favorites = this.props.favorites.slice(0, index).concat(this.props.favorites.slice(index+1));
+        const favoriteRestaurants = this.props.favoriteRestaurants.slice(0, index).concat(this.props.favoriteRestaurants.slice(index+1));
+        store.dispatch(updateFavoriteRestaurants(favorites, favoriteRestaurants));
     }
 
+    getNote(phone, restaurant) {
+        this.setState({selectedRestaurant: restaurant});
+        this.setState({ showNote: true });
+        const notes = this.props.allNotes;
+        if (notes.hasOwnProperty(phone)) {
+            store.dispatch(getNote(notes[phone]));
+        }
+    }
+
+    // get the note from textArea, save it to the state
+    takeNote(event) {
+        this.setState({newNote: event.target.value});
+    }
+
+    saveNote(phone) {
+        store.dispatch(saveNoteForRestaurant(phone, this.state.newNote));
+        store.dispatch(getAllNotes());
+        this.setState({ showNote: false });
+    }
 
     render() {
-        const restaurants = this.props.restaurants;
+        const favorites = this.props.favorites;
+        let restaurants;
+        if (this.props.showBool) {
+            restaurants = this.props.favoriteRestaurants;
+        } else {
+            restaurants = this.props.restaurants;
+        }
+        const tooltip = <Tooltip id="add">Add to Favorite</Tooltip>;
+
         return  (
             <div>
                 <section>
                     {
-                        restaurants.map((restaurant,i) => {
+                        (this.props.showBool)
+                            ? (
+                            <Well bsStyle="small">
+                                <span className="glyphicon glyphicon-star-empty"> <strong>My Favorites Eaters</strong> </span>
+
+                            </Well>
+                        )
+                            : <div></div>
+                    }
+                    {
+                        favorites && restaurants.map((restaurant,index) => {
                             return (
-                                <div key={i}>
+                                <div key={index}>
                                     <Table>
                                         <tbody>
                                         <tr>
@@ -55,8 +113,54 @@ export class Result extends Component {
                                                 </Panel>
                                             </td>
                                             <td className="addFav">
-                                                <p><Button onClick={() => this.addFavorite(parseInt(restaurant.phone.slice(1)))}><span className="glyphicon glyphicon-star-empty"></span></Button></p>
-                                                <p><Button><span className="glyphicon glyphicon-edit"></span></Button></p>
+                                                {
+                                                    // if the restaurant is already in favorites, show the "note" button for memo
+                                                    (favorites.indexOf(parseInt(restaurant.phone)) === -1) // restaurant not in favorites
+                                                    ? (
+                                                        <div>
+                                                            <OverlayTrigger placement="left" overlay={tooltip}>
+                                                                <Button onClick={() => this.addFavorite(parseInt(restaurant.phone.slice(1)), restaurant)}><span className="glyphicon glyphicon-plus"></span>
+                                                                </Button>
+                                                            </OverlayTrigger>
+                                                        </div>
+                                                    )
+                                                        // if the restaurant is not in the restaurant, show the "add" button
+                                                    : (
+                                                        <div>
+                                                            <ButtonToolbar>
+                                                                <Button bsStyle="primary" onClick={() => this.getNote(parseInt(restaurant.phone.slice(1)), restaurant)}>
+                                                                    <span className="glyphicon glyphicon-edit"></span>
+                                                                </Button>
+
+                                                                <Modal
+                                                                    show={this.state.showNote}
+                                                                    onHide={this.hideModal}
+                                                                    dialogClassName="custom-modal"
+                                                                >
+                                                                    <Modal.Header>
+                                                                        <Modal.Title id="contained-modal-title-md">{this.state.selectedRestaurant.name}</Modal.Title>
+                                                                    </Modal.Header>
+                                                                    <Modal.Body>
+                                                                        <form>
+                                                                            <textarea id="note" onChange={this.takeNote} defaultValue={this.props.note}></textarea>
+                                                                        </form>
+                                                                    </Modal.Body>
+                                                                    <Modal.Footer>
+                                                                        <Button onClick={() => this.saveNote(parseInt(this.state.selectedRestaurant.phone.slice(1)))}>Save</Button>
+                                                                    </Modal.Footer>
+                                                                </Modal>
+                                                            </ButtonToolbar>
+                                                            {
+                                                                (this.props.showBool)
+                                                                    ? <Button bsStyle="primary" onClick={()=>this.deleteFavorite(index, restaurant.phone)}>
+                                                                    <span className="glyphicon glyphicon-trash"></span>
+                                                                </Button>
+                                                                    : <div></div>
+                                                            }
+                                                        </div>
+
+                                                    )
+                                                }
                                             </td>
                                         </tr>
                                         </tbody>
@@ -73,7 +177,12 @@ export class Result extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        restaurants: state.result.restaurants
+        restaurants: state.result.restaurants,
+        favoriteRestaurants: state.favorites.favoriteRestaurants,
+        favorites: state.favorites.favorites,
+        showBool: state.favorites.showBool,
+        note: state.favorites.note,
+        allNotes: state.favorites.notes,
     }
 };
 
@@ -81,4 +190,3 @@ export default connect(
     mapStateToProps,
     {},
 )(Result)
-
