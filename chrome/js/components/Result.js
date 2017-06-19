@@ -27,7 +27,8 @@ export class Result extends Component {
         this.setState({
             favorites: newProps.favorites,
             favoriteRestaurants: newProps.favoriteRestaurants,
-            allNotes: newProps.allNotes
+            allNotes: newProps.allNotes,
+            note: newProps.note
         })
     }
 

@@ -36022,7 +36022,7 @@
 	                notes = Object.assign(newNote);
 	            } else {
 	                console.log('prev notes', results.notes);
-	                notes = Object.assign({}, results.notes, newNote);
+	                notes = Object.assign(results.notes, newNote);
 	                console.log('after added note', notes);
 	            }
 	            chrome.storage.sync.set({ 'notes': notes }, function () {
@@ -57555,7 +57555,8 @@
 	            this.setState({
 	                favorites: newProps.favorites,
 	                favoriteRestaurants: newProps.favoriteRestaurants,
-	                allNotes: newProps.allNotes
+	                allNotes: newProps.allNotes,
+	                note: newProps.note
 	            });
 	        }
 	
