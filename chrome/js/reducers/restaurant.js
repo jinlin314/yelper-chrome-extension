@@ -15,7 +15,7 @@ const GET_RESTAURANTS_REVIEWS = 'GET_RESTAURANTS_REVIEWS';
 const SELECT_RESTAURANT = 'SELECT_RESTAURANT';
 const GET_LOCATION = 'GET_LOCATION';
 const FETCH_NYC_RECORDS = 'FETCH_NYC_RECORDS';
-const GET_GRADE_FOR_RESTAURANT = 'GET_GRADE_FOR_RESTAURANT';
+const GET_GRADES_FOR_RESTAURANT = 'GET_GRADES_FOR_RESTAURANT';
 
 // /* --------------    ACTION CREATORS    ----------------- */
 
@@ -26,7 +26,7 @@ const getReviews = (reviews) => ({ type: GET_RESTAURANTS_REVIEWS, reviews });
 const select = (restaurant) => ({ type: SELECT_RESTAURANT, restaurant });
 const locate = (location) => ({ type: GET_LOCATION, location});
 const fetchRecords = (nycRecords) => ({type: FETCH_NYC_RECORDS, nycRecords});
-const getGrade = (grade) => ({type: GET_GRADE_FOR_RESTAURANT, grade});
+export const getGrades = (grades) => ({type: GET_GRADES_FOR_RESTAURANT, grades});
 
 /* ------------------    REDUCER    --------------------- */
 const initial_state = {
@@ -37,7 +37,7 @@ const initial_state = {
     reviews: [],
     search: false,
     nycRecords: [],
-    grade: "Unavailabe"
+    grade: []
 };
 
 export default function reducer(state = initial_state, action) {
@@ -69,8 +69,8 @@ export default function reducer(state = initial_state, action) {
         case FETCH_NYC_RECORDS:
             newState.nycRecords = action.nycRecords;
             break;
-        case GET_GRADE_FOR_RESTAURANT:
-            newState.grade = action.grade;
+        case GET_GRADES_FOR_RESTAURANT:
+            newState.grades = action.grades;
             break;
         default:
             return state;

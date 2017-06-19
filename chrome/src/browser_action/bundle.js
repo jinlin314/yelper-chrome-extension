@@ -26331,7 +26331,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.yelpSearch = exports.getNYCHealthRecords = exports.geoFindMe = undefined;
+	exports.yelpSearch = exports.getNYCHealthRecords = exports.geoFindMe = exports.getGrades = undefined;
 	exports.default = reducer;
 	
 	var _axios = __webpack_require__(245);
@@ -26359,7 +26359,7 @@
 	var SELECT_RESTAURANT = 'SELECT_RESTAURANT';
 	var GET_LOCATION = 'GET_LOCATION';
 	var FETCH_NYC_RECORDS = 'FETCH_NYC_RECORDS';
-	var GET_GRADE_FOR_RESTAURANT = 'GET_GRADE_FOR_RESTAURANT';
+	var GET_GRADES_FOR_RESTAURANT = 'GET_GRADES_FOR_RESTAURANT';
 	
 	// /* --------------    ACTION CREATORS    ----------------- */
 	
@@ -26384,8 +26384,8 @@
 	var fetchRecords = function fetchRecords(nycRecords) {
 	    return { type: FETCH_NYC_RECORDS, nycRecords: nycRecords };
 	};
-	var getGrade = function getGrade(grade) {
-	    return { type: GET_GRADE_FOR_RESTAURANT, grade: grade };
+	var getGrades = exports.getGrades = function getGrades(grades) {
+	    return { type: GET_GRADES_FOR_RESTAURANT, grades: grades };
 	};
 	
 	/* ------------------    REDUCER    --------------------- */
@@ -26397,7 +26397,7 @@
 	    reviews: [],
 	    search: false,
 	    nycRecords: [],
-	    grade: "Unavailabe"
+	    grade: []
 	};
 	
 	function reducer() {
@@ -26432,8 +26432,8 @@
 	        case FETCH_NYC_RECORDS:
 	            newState.nycRecords = action.nycRecords;
 	            break;
-	        case GET_GRADE_FOR_RESTAURANT:
-	            newState.grade = action.grade;
+	        case GET_GRADES_FOR_RESTAURANT:
+	            newState.grades = action.grades;
 	            break;
 	        default:
 	            return state;
@@ -57552,6 +57552,8 @@
 	
 	var _favorites = __webpack_require__(337);
 	
+	var _restaurant = __webpack_require__(244);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -57571,10 +57573,9 @@
 	        var _this = _possibleConstructorReturn(this, (Result.__proto__ || Object.getPrototypeOf(Result)).call(this, props));
 	
 	        _this.state = {
-	            newNote: _this.props.note,
+	            newNote: '',
 	            showNote: false,
-	            selectedRestaurant: {},
-	            grades: []
+	            selectedRestaurant: {}
 	        };
 	
 	        _this.addFavorite = _this.addFavorite.bind(_this);
@@ -57593,7 +57594,8 @@
 	                favoriteRestaurants: newProps.favoriteRestaurants,
 	                allNotes: newProps.allNotes,
 	                note: newProps.note,
-	                nycRecords: newProps.nycRecords
+	                nycRecords: newProps.nycRecords,
+	                grades: newProps.grades
 	            });
 	        }
 	
@@ -57608,10 +57610,6 @@
 	    }, {
 	        key: 'deleteFavorite',
 	        value: function deleteFavorite(index, phone) {
-	            console.log("target: ", phone);
-	            console.log('fav: ', this.props.favorites[index]);
-	            console.log('favRes: ', this.props.favoriteRestaurants[index]);
-	
 	            var favorites = this.props.favorites.slice(0, index).concat(this.props.favorites.slice(index + 1));
 	            var favoriteRestaurants = this.props.favoriteRestaurants.slice(0, index).concat(this.props.favoriteRestaurants.slice(index + 1));
 	            _store2.default.dispatch((0, _favorites.updateFavoriteRestaurants)(favorites, favoriteRestaurants));
@@ -57638,28 +57636,26 @@
 	        key: 'saveNote',
 	        value: function saveNote(phone) {
 	            _store2.default.dispatch((0, _favorites.saveNoteForRestaurant)(phone, this.state.newNote));
-	            // store.dispatch(getAllNotes());
+	            _store2.default.dispatch((0, _favorites.getAllNotes)());
 	            this.setState({ showNote: false });
 	        }
 	    }, {
 	        key: 'showGrades',
 	        value: function showGrades(phone) {
-	            console.log("showGrades handler");
 	            var grades = [];
-	            var thisYear = new Date().getFullYear();
 	            var nycRecords = this.props.nycRecords;
 	            for (var i = 0; i < nycRecords.length; i++) {
-	                var record = [];
-	                var year = parseInt(nycRecords[i][16].slice(0, 3));
+	                var record = '';
 	                if (nycRecords[i].indexOf(phone) !== -1) {
 	                    // nycRecords[i][14] is the business' phone number in string
 	                    if (nycRecords[i][22]) {
 	                        // nycRecords[i][22] is the Health Inspection Grade, null if not available
-	                        console.log(nycRecords[i][22], nycRecords[i][16]);
+	                        record = '(' + nycRecords[i][22] + ') - ' + nycRecords[i][16].slice(0, 10);
+	                        grades.push(record);
 	                    }
 	                }
 	            }
-	            // this.setState({grades: grades});
+	            _store2.default.dispatch((0, _restaurant.getGrades)(grades));
 	        }
 	    }, {
 	        key: 'render',
@@ -57761,14 +57757,28 @@
 	                                            'td',
 	                                            { className: 'addFav' },
 	                                            _this2.props.nycRecords.length > 0 ? _react2.default.createElement(
-	                                                _reactBootstrap.Button,
-	                                                { bsStyle: 'primary', onClick: function onClick() {
-	                                                        return _this2.showGrades(restaurant.phone.slice(1));
-	                                                    } },
+	                                                _reactBootstrap.OverlayTrigger,
+	                                                { trigger: 'click', placement: 'left', overlay: _react2.default.createElement(
+	                                                        _reactBootstrap.Popover,
+	                                                        { id: 'popover-positioned-left', title: 'Health Inspection Grades' },
+	                                                        _this2.props.grades && _this2.props.grades.map(function (grade) {
+	                                                            return _react2.default.createElement(
+	                                                                'h4',
+	                                                                null,
+	                                                                grade
+	                                                            );
+	                                                        })
+	                                                    ) },
 	                                                _react2.default.createElement(
-	                                                    'span',
-	                                                    { className: 'glyphicon glyphicon-search' },
-	                                                    'Grade'
+	                                                    _reactBootstrap.Button,
+	                                                    { bsStyle: 'primary', onClick: function onClick() {
+	                                                            return _this2.showGrades(restaurant.phone.slice(2));
+	                                                        } },
+	                                                    _react2.default.createElement(
+	                                                        'span',
+	                                                        { className: 'glyphicon glyphicon-search' },
+	                                                        'Grade'
+	                                                    )
 	                                                )
 	                                            ) : _react2.default.createElement('div', null),
 	
@@ -57825,7 +57835,7 @@
 	                                                            _react2.default.createElement(
 	                                                                'form',
 	                                                                null,
-	                                                                _react2.default.createElement('textarea', { id: 'note', onChange: _this2.takeNote, defaultValue: _this2.state.newNote })
+	                                                                _react2.default.createElement('textarea', { id: 'note', onChange: _this2.takeNote, defaultValue: _this2.props.note })
 	                                                            )
 	                                                        ),
 	                                                        _react2.default.createElement(
@@ -57871,7 +57881,8 @@
 	        favorites: state.favorites.favorites,
 	        showBool: state.favorites.showBool,
 	        note: state.favorites.note,
-	        allNotes: state.favorites.notes
+	        allNotes: state.favorites.notes,
+	        grades: state.result.grades
 	    };
 	};
 	
