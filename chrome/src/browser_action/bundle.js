@@ -57630,6 +57630,7 @@
 	    }, {
 	        key: 'takeNote',
 	        value: function takeNote(event) {
+	            _store2.default.dispatch((0, _favorites.getAllNotes)());
 	            this.setState({ newNote: event.target.value });
 	        }
 	    }, {
@@ -57656,7 +57657,7 @@
 	                    // nycRecords[i][14] is the business' phone number in string
 	                    if (nycRecords[i][22]) {
 	                        // nycRecords[i][22] is the Health Inspection Grade, null if not available
-	                        record = '(' + nycRecords[i][22] + ') -- ' + nycRecords[i][16].slice(0, 10) + ' -- ' + nycRecords[i][19];
+	                        record = 'GRADE: (' + nycRecords[i][22] + ') -- ' + nycRecords[i][16].slice(0, 10) + ' -- ' + nycRecords[i][19];
 	
 	                        grades.push(record);
 	                    }
@@ -57771,7 +57772,7 @@
 	                                                _reactBootstrap.OverlayTrigger,
 	                                                { trigger: 'focus', placement: 'left', overlay: _react2.default.createElement(
 	                                                        _reactBootstrap.Popover,
-	                                                        { id: 'popover-positioned-left', title: 'Health Inspection Grades' },
+	                                                        { className: 'grades', id: 'popover-positioned-left', title: 'Health Inspection Grades' },
 	                                                        _this2.props.grades && _this2.props.grades.map(function (grade, i) {
 	                                                            return _react2.default.createElement(
 	                                                                'div',

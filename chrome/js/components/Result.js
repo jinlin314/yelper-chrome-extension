@@ -59,6 +59,7 @@ export class Result extends Component {
 
     // get the note from textArea, save it to the state
     takeNote(event) {
+        store.dispatch(getAllNotes());
         this.setState({newNote: event.target.value});
     }
 
@@ -80,7 +81,7 @@ export class Result extends Component {
             let record = '';
             if (nycRecords[i].indexOf(phone) !== -1) { // nycRecords[i][14] is the business' phone number in string
                 if (nycRecords[i][22] ) { // nycRecords[i][22] is the Health Inspection Grade, null if not available
-                    record = '(' + nycRecords[i][22] + ') -- ' + nycRecords[i][16].slice(0,10) + ' -- ' + nycRecords[i][19];
+                    record = 'GRADE: (' + nycRecords[i][22] + ') -- ' + nycRecords[i][16].slice(0,10) + ' -- ' + nycRecords[i][19];
 
                     grades.push(record);
                 }
@@ -141,7 +142,8 @@ export class Result extends Component {
                                                     (this.props.nycRecords.length > 0)
                                                         ? (
                                                             <OverlayTrigger trigger="focus" placement="left" overlay={
-                                                                <Popover id="popover-positioned-left" title="Health Inspection Grades">
+                                                                <Popover className="grades" id="popover-positioned-left" title="Health Inspection Grades">
+
                                                                     {
                                                                         this.props.grades && this.props.grades.map((grade, i) => {
                                                                             return (
@@ -152,6 +154,7 @@ export class Result extends Component {
                                                                             )
                                                                         })
                                                                     }
+
                                                                 </Popover>
                                                             }>
                                                                 <Button bsStyle="primary" onClick={() => this.showGrades(restaurant.phone.slice(2))}>
