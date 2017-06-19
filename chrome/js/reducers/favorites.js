@@ -152,7 +152,6 @@ export const getAllNotes = () => dispatch => {
 export const saveNoteForRestaurant = (phone, note) => dispatch => {
     const newNote = {};
     newNote[phone] = note;
-    console.log('new note', newNote);
     let notes;
 
     chrome.storage.sync.get(function(results) {

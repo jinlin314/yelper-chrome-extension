@@ -1,6 +1,7 @@
 // /**
 //  * Created by jinlin on 6/15/17.
 //  */
+import axios from 'axios';
 import yelp from 'yelp-fusion';
 import {clientId, clientSecret} from '../secret'
 
@@ -13,6 +14,8 @@ const GET_RESTAURANTS_BY_BUSINESS = 'GET_RESTAURANTS_BY_BUSINESS';
 const GET_RESTAURANTS_REVIEWS = 'GET_RESTAURANTS_REVIEWS';
 const SELECT_RESTAURANT = 'SELECT_RESTAURANT';
 const GET_LOCATION = 'GET_LOCATION';
+const FETCH_NYC_RECORDS = 'FETCH_NYC_RECORDS';
+const GET_GRADES_FOR_RESTAURANT = 'GET_GRADES_FOR_RESTAURANT';
 
 // /* --------------    ACTION CREATORS    ----------------- */
 
@@ -22,6 +25,8 @@ const getByDelivery = (restaurants) => ({ type: GET_RESTAURANTS_BY_DELIVERY, res
 const getReviews = (reviews) => ({ type: GET_RESTAURANTS_REVIEWS, reviews });
 const select = (restaurant) => ({ type: SELECT_RESTAURANT, restaurant });
 const locate = (location) => ({ type: GET_LOCATION, location});
+const fetchRecords = (nycRecords) => ({type: FETCH_NYC_RECORDS, nycRecords});
+export const getGrades = (grades) => ({type: GET_GRADES_FOR_RESTAURANT, grades});
 
 /* ------------------    REDUCER    --------------------- */
 const initial_state = {
@@ -30,7 +35,9 @@ const initial_state = {
     restaurant: null,
     location: null,
     reviews: [],
-    search: false
+    search: false,
+    nycRecords: [],
+    grade: []
 };
 
 export default function reducer(state = initial_state, action) {
@@ -59,10 +66,16 @@ export default function reducer(state = initial_state, action) {
         case GET_LOCATION:
             newState.location = action.location;
             break;
+        case FETCH_NYC_RECORDS:
+            newState.nycRecords = action.nycRecords;
+            break;
+        case GET_GRADES_FOR_RESTAURANT:
+            newState.grades = action.grades;
+            break;
         default:
-            return state
+            return state;
     }
-    return newState
+    return newState;
 }
 
 
@@ -83,6 +96,17 @@ export const geoFindMe = () => dispatch => {
 
     navigator.geolocation.getCurrentPosition(success, error);
 };
+
+export const getNYCHealthRecords = () => dispatch => {
+    axios.get('https://data.cityofnewyork.us/api/views/43nn-pn8j/rows.json')
+        .then(res => res.data)
+        .then(data => dispatch(fetchRecords(data.data)))
+        .catch(console.error);
+};
+
+// export const getGradeForRestaurant = (phone) => dispatch => {
+//
+// };
 
 export const yelpSearch = (keywords, filterType, location) => dispatch => {
     // authenticate with yelp API, obtain an access token

@@ -3,10 +3,11 @@
  */
 
 import React, {Component} from 'react';
-import {Modal, Well, Table, OverlayTrigger, Tooltip, ButtonToolbar, Image, Panel, Button} from 'react-bootstrap';
+import {Modal, Well, Table, OverlayTrigger, Popover, Tooltip, ButtonToolbar, Image, Panel, Button} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import store from '../store';
-import {getAllFavorites, addFavorite, getNote, getAllNotes, saveNoteForRestaurant, updateFavoriteRestaurants} from '../reducers/favorites';
+import {addFavorite, getNote, getAllNotes, saveNoteForRestaurant, updateFavoriteRestaurants} from '../reducers/favorites';
+import {getGrades} from '../reducers/restaurant';
 
 export class Result extends Component {
     constructor(props) {
@@ -21,14 +22,17 @@ export class Result extends Component {
         this.deleteFavorite = this.deleteFavorite.bind(this);
         this.getNote = this.getNote.bind(this);
         this.takeNote = this.takeNote.bind(this);
+        this.showGrades = this.showGrades.bind(this);
     }
 
-    componentWillReceiveProps(newProps, oldProps) {
+    componentWillReceiveProps(newProps) {
         this.setState({
             favorites: newProps.favorites,
             favoriteRestaurants: newProps.favoriteRestaurants,
             allNotes: newProps.allNotes,
-            note: newProps.note
+            note: newProps.note,
+            nycRecords: newProps.nycRecords,
+            grades: newProps.grades
         })
     }
 
@@ -39,10 +43,6 @@ export class Result extends Component {
     };
 
     deleteFavorite(index, phone) {
-        console.log("target: ", phone);
-        console.log('fav: ', this.props.favorites[index]);
-        console.log('favRes: ', this.props.favoriteRestaurants[index]);
-
         const favorites = this.props.favorites.slice(0, index).concat(this.props.favorites.slice(index+1));
         const favoriteRestaurants = this.props.favoriteRestaurants.slice(0, index).concat(this.props.favoriteRestaurants.slice(index+1));
         store.dispatch(updateFavoriteRestaurants(favorites, favoriteRestaurants));
@@ -66,6 +66,21 @@ export class Result extends Component {
         store.dispatch(saveNoteForRestaurant(phone, this.state.newNote));
         store.dispatch(getAllNotes());
         this.setState({ showNote: false });
+    }
+
+    showGrades(phone) {
+        let grades = [];
+        const nycRecords = this.props.nycRecords;
+        for (let i = 0; i < nycRecords.length; i++) {
+            let record = '';
+            if (nycRecords[i].indexOf(phone) !== -1) { // nycRecords[i][14] is the business' phone number in string
+                if (nycRecords[i][22] ) { // nycRecords[i][22] is the Health Inspection Grade, null if not available
+                    record = '(' + nycRecords[i][22] + ') - ' + nycRecords[i][16].slice(0,10);
+                    grades.push(record);
+                }
+            }
+        }
+        store.dispatch(getGrades(grades));
     }
 
     render() {
@@ -114,6 +129,23 @@ export class Result extends Component {
                                             </td>
                                             <td className="addFav">
                                                 {
+                                                    (this.props.nycRecords.length > 0)
+                                                        ? (
+                                                            <OverlayTrigger trigger="click" placement="left" overlay={
+                                                                <Popover id="popover-positioned-left" title="Health Inspection Grades">
+                                                                    {
+                                                                        this.props.grades && this.props.grades.map(grade => { return(<h4>{grade}</h4>)})
+                                                                    }
+                                                                </Popover>
+                                                            }>
+                                                                <Button bsStyle="primary" onClick={() => this.showGrades(restaurant.phone.slice(2))}>
+                                                                    <span className="glyphicon glyphicon-search">Grade</span>
+                                                                </Button>
+                                                            </OverlayTrigger>
+                                                    )
+                                                        : (<div></div>)
+                                                }
+                                                {
                                                     // if the restaurant is already in favorites, show the "note" button for memo
                                                     (favorites.indexOf(parseInt(restaurant.phone)) === -1) // restaurant not in favorites
                                                     ? (
@@ -128,6 +160,7 @@ export class Result extends Component {
                                                     : (
                                                         <div>
                                                             <ButtonToolbar>
+
                                                                 <Button bsStyle="primary" onClick={() => this.getNote(parseInt(restaurant.phone.slice(1)), restaurant)}>
                                                                     <span className="glyphicon glyphicon-edit"></span>
                                                                 </Button>
@@ -177,12 +210,14 @@ export class Result extends Component {
 
 const mapStateToProps = (state) => {
     return {
+        nycRecords: state.result.nycRecords,
         restaurants: state.result.restaurants,
         favoriteRestaurants: state.favorites.favoriteRestaurants,
         favorites: state.favorites.favorites,
         showBool: state.favorites.showBool,
         note: state.favorites.note,
         allNotes: state.favorites.notes,
+        grades: state.result.grades,
     }
 };
 
